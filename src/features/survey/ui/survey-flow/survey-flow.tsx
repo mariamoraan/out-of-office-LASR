@@ -144,6 +144,8 @@ export function SurveyFlow() {
   const textSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const pendingTextPatchRef = useRef<SurveyDraftPatch>({});
+  const pendingTextKeysRef = useRef<string[]>([]);
   const draftRef = useRef<SurveyResponseDto | null>(null);
   const stepFocusRef = useRef<HTMLInputElement | HTMLButtonElement | null>(
     null,
@@ -265,6 +267,26 @@ export function SurveyFlow() {
     }, TEXT_SAVED_VISIBLE_MS);
   }, []);
 
+  const applyServerDraft = useCallback((survey: SurveyResponseDto) => {
+    const pending = pendingTextPatchRef.current;
+    if (Object.keys(pending).length === 0) {
+      setDraft(survey);
+      return;
+    }
+
+    const { privacyConsentAcceptedAt, ...rest } = pending;
+    const next: SurveyResponseDto = { ...survey, ...rest };
+
+    if (privacyConsentAcceptedAt !== undefined) {
+      next.privacyConsentAcceptedAt =
+        privacyConsentAcceptedAt == null
+          ? null
+          : privacyConsentAcceptedAt.toISOString();
+    }
+
+    setDraft(next);
+  }, []);
+
   const persistPatch = useCallback(
     async (key: string, kind: "selection" | "text", patch: SurveyDraftPatch) => {
       setSavingKey(key);
@@ -272,7 +294,7 @@ export function SurveyFlow() {
 
       try {
         const survey = await patchSurveyDraft(patch);
-        setDraft(survey);
+        applyServerDraft(survey);
 
         if (kind === "text") {
           markTextSaved(key);
@@ -290,12 +312,39 @@ export function SurveyFlow() {
         setSavingKey((current) => (current === key ? null : current));
       }
     },
-    [markTextSaved],
+    [applyServerDraft, markTextSaved],
   );
 
+  const flushPendingTextPatch = useCallback(() => {
+    const patch = pendingTextPatchRef.current;
+    const keys = pendingTextKeysRef.current;
+    if (Object.keys(patch).length === 0 || keys.length === 0) {
+      return;
+    }
+
+    pendingTextPatchRef.current = {};
+    pendingTextKeysRef.current = [];
+    const statusKey = keys[keys.length - 1] ?? "text";
+
+    void persistPatch(statusKey, "text", patch).then((survey) => {
+      if (survey) {
+        return;
+      }
+
+      pendingTextPatchRef.current = {
+        ...patch,
+        ...pendingTextPatchRef.current,
+      };
+      pendingTextKeysRef.current = [
+        ...keys,
+        ...pendingTextKeysRef.current.filter((key) => !keys.includes(key)),
+      ];
+    });
+  }, [persistPatch]);
+
   const debouncedPersist = useDebouncedCallback(
-    (key: string, patch: SurveyDraftPatch) => {
-      void persistPatch(key, "text", patch);
+    () => {
+      flushPendingTextPatch();
     },
     TEXT_INPUT_DEBOUNCE_MS,
   );
@@ -330,10 +379,18 @@ export function SurveyFlow() {
 
   const saveDebounced = useCallback(
     (key: string, patch: SurveyDraftPatch) => {
+      pendingTextPatchRef.current = {
+        ...pendingTextPatchRef.current,
+        ...patch,
+      };
+      if (!pendingTextKeysRef.current.includes(key)) {
+        pendingTextKeysRef.current = [...pendingTextKeysRef.current, key];
+      }
+
       setSavingKey(key);
       setTextSavedKey((current) => (current === key ? null : current));
       updateLocal(patch);
-      debouncedPersist(key, patch);
+      debouncedPersist();
     },
     [debouncedPersist, updateLocal],
   );
