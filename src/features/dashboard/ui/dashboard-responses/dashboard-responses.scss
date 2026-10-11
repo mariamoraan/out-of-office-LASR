@@ -227,7 +227,8 @@
 
   th:nth-child(1),
   td:nth-child(1) {
-    width: 6.75rem;
+    width: 7.25rem;
+    overflow: visible;
   }
 
   th:nth-child(2),

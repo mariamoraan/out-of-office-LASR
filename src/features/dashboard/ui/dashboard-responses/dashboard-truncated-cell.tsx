@@ -26,8 +26,22 @@ export function DashboardTruncatedCell({ value }: DashboardTruncatedCellProps) {
 
     const observer = new ResizeObserver(measure);
     observer.observe(element);
+    window.addEventListener("resize", measure);
 
-    return () => observer.disconnect();
+    let cancelled = false;
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      void document.fonts.ready.then(() => {
+        if (!cancelled) {
+          measure();
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, [value]);
 
   return (

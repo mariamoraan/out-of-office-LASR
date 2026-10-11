@@ -93,6 +93,13 @@ export function CTooltip({
     }
 
     updatePosition();
+
+    // Portal + motion can attach the bubble ref one frame later.
+    const frame = window.requestAnimationFrame(() => {
+      updatePosition();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [open, canOpen, content, updatePosition]);
 
   useEffect(() => {
@@ -104,9 +111,17 @@ export function CTooltip({
     window.addEventListener("resize", onReposition);
     window.addEventListener("scroll", onReposition, true);
 
+    const trigger = triggerRef.current;
+    const observer =
+      trigger && typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(onReposition)
+        : null;
+    observer?.observe(trigger);
+
     return () => {
       window.removeEventListener("resize", onReposition);
       window.removeEventListener("scroll", onReposition, true);
+      observer?.disconnect();
     };
   }, [open, canOpen, updatePosition]);
 
