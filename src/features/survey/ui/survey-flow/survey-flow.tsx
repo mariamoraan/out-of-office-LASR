@@ -25,7 +25,14 @@ import {
   type WorkArea,
 } from "@/core/constants/survey.constants";
 import { getDictionary } from "@/core/i18n";
-import { AtSign, Calendar, Link2, MessageCircle, Share2 } from "@/core/icons";
+import {
+  AtSign,
+  Calendar,
+  Link2,
+  MessageCircle,
+  Share2,
+  Sparkles,
+} from "@/core/icons";
 import { appRoutes } from "@/core/routes/app.routes";
 import {
   CButton,
@@ -139,6 +146,7 @@ export function SurveyFlow() {
   const [error, setError] = useState<string | null>(null);
   const [contactError, setContactError] = useState<string | null>(null);
   const [consentError, setConsentError] = useState<string | null>(null);
+  const [leisureOtherDraft, setLeisureOtherDraft] = useState("");
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [textSavedKey, setTextSavedKey] = useState<string | null>(null);
   const textSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -778,15 +786,37 @@ export function SurveyFlow() {
                   }}
                 />
               ))}
+              {hasText(draft.leisureOther) ? (
+                <CChip
+                  key="leisure-other-chip"
+                  label={draft.leisureOther ?? ""}
+                  icon={<Sparkles size={16} strokeWidth={1.75} />}
+                  selected
+                  selection="checkbox"
+                  status={fieldStatus("leisureOther", "selection")}
+                  enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+                  onClick={() => {
+                    void saveImmediate("leisureOther", { leisureOther: null });
+                  }}
+                />
+              ) : null}
             </CChoiceGroup>
             <CInput
               id="leisure-other"
               label={t.common.other}
-              value={draft.leisureOther ?? ""}
+              value={leisureOtherDraft}
               placeholder={t.common.otherPlaceholder}
               status={fieldStatus("leisureOther", "text")}
-              onChange={(value) => {
-                saveDebounced("leisureOther", { leisureOther: value });
+              enterKeyHint="done"
+              onChange={setLeisureOtherDraft}
+              onEnter={() => {
+                const trimmed = leisureOtherDraft.trim();
+                if (!trimmed) {
+                  return;
+                }
+
+                setLeisureOtherDraft("");
+                void saveImmediate("leisureOther", { leisureOther: trimmed });
               }}
             />
           </div>
