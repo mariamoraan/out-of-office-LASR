@@ -23,8 +23,12 @@ export const es = {
     subtitle:
       "Una comunidad de personas que trabajamos en producto digital y tecnología desde Los Ángeles de San Rafael y alrededores.",
     cta: "Empezar",
+    ctaEdit: "Editar mis respuestas",
   },
   survey: {
+    edit: {
+      doneCta: "Volver al inicio",
+    },
     steps: {
       fullName: {
         title: "¿Cómo te llamas?",
