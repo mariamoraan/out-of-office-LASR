@@ -48,6 +48,16 @@ export const LEISURE_TAGS = [
   "museums",
   "camping",
   "painting",
+  "reading",
+  "cinema",
+  "music",
+  "cycling",
+  "photography",
+  "board_games",
+  "cooking",
+  "travel",
+  "dancing",
+  "video_games",
 ] as const;
 
 export type LeisureTag = (typeof LEISURE_TAGS)[number];
