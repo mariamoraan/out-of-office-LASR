@@ -47,3 +47,12 @@
 .c-chip__label {
   white-space: nowrap;
 }
+
+.c-chip__status.c-field-status {
+  color: var(--color-primary-strong);
+
+  .c-field-status__spinner,
+  .c-field-status__check {
+    color: inherit;
+  }
+}

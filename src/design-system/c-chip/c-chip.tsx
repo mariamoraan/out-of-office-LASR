@@ -81,7 +81,10 @@ export function CChip({
       ) : null}
       <span className="c-chip__label">{label}</span>
       {trailingStatus !== "idle" ? (
-        <CFieldStatus status={trailingStatus} />
+        <CFieldStatus
+          className="c-chip__status"
+          status={trailingStatus}
+        />
       ) : null}
     </motion.button>
   );
