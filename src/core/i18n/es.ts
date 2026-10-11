@@ -121,7 +121,7 @@ export const es = {
         painting: "Pintura",
         reading: "Lectura",
         cinema: "Cine",
-        music: "Música / conciertos",
+        music: "Conciertos",
         cycling: "Ciclismo",
         photography: "Fotografía",
         board_games: "Juegos de mesa",
