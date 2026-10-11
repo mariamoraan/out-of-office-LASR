@@ -116,7 +116,9 @@ export function CTooltip({
       trigger && typeof ResizeObserver !== "undefined"
         ? new ResizeObserver(onReposition)
         : null;
-    observer?.observe(trigger);
+    if (trigger && observer) {
+      observer.observe(trigger);
+    }
 
     return () => {
       window.removeEventListener("resize", onReposition);
