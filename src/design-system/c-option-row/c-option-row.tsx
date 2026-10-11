@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { KeyboardEvent, ReactNode } from "react";
+import type { KeyboardEvent, ReactNode, Ref } from "react";
 
 import {
   CFieldStatus,
@@ -23,6 +23,7 @@ type COptionRowProps = {
   tabIndex?: number;
   /** When set, Enter submits this form instead of activating the row. */
   enterSubmitsFormId?: string;
+  ref?: Ref<HTMLButtonElement>;
 };
 
 export function COptionRow({
@@ -36,6 +37,7 @@ export function COptionRow({
   selection,
   tabIndex,
   enterSubmitsFormId,
+  ref,
 }: COptionRowProps) {
   const classes = [
     "c-option-row",
@@ -62,6 +64,7 @@ export function COptionRow({
 
   return (
     <motion.button
+      ref={ref}
       type="button"
       className={classes}
       onClick={onClick}

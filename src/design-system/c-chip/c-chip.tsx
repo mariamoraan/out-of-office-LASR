@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { KeyboardEvent, ReactNode } from "react";
+import type { KeyboardEvent, ReactNode, Ref } from "react";
 
 import {
   CFieldStatus,
@@ -23,6 +23,7 @@ type CChipProps = {
   tabIndex?: number;
   /** When set, Enter submits this form instead of activating the chip. */
   enterSubmitsFormId?: string;
+  ref?: Ref<HTMLButtonElement>;
 };
 
 export function CChip({
@@ -36,6 +37,7 @@ export function CChip({
   selection,
   tabIndex,
   enterSubmitsFormId,
+  ref,
 }: CChipProps) {
   const classes = [
     "c-chip",
@@ -62,6 +64,7 @@ export function CChip({
 
   return (
     <motion.button
+      ref={ref}
       type="button"
       className={classes}
       onClick={onClick}

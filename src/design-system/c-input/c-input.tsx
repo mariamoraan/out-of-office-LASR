@@ -1,6 +1,11 @@
 "use client";
 
-import type { ChangeEvent, InputHTMLAttributes, ReactNode } from "react";
+import type {
+  ChangeEvent,
+  InputHTMLAttributes,
+  ReactNode,
+  Ref,
+} from "react";
 
 import {
   CFieldStatus,
@@ -28,6 +33,7 @@ type CInputProps = {
   ariaLabelledBy?: string;
   ariaDescribedBy?: string;
   ariaInvalid?: boolean;
+  ref?: Ref<HTMLInputElement>;
 };
 
 export function CInput({
@@ -49,6 +55,7 @@ export function CInput({
   ariaLabelledBy,
   ariaDescribedBy,
   ariaInvalid,
+  ref,
 }: CInputProps) {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -70,6 +77,7 @@ export function CInput({
           </span>
         ) : null}
         <input
+          ref={ref}
           id={id}
           className="c-input__control"
           type={type}
