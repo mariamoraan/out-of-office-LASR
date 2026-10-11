@@ -1,6 +1,7 @@
 export { CButton } from "@/design-system/c-button/c-button";
 export { CChip } from "@/design-system/c-chip/c-chip";
 export { CChipGroup } from "@/design-system/c-chip-group/c-chip-group";
+export { CChoiceGroup } from "@/design-system/c-choice-group/c-choice-group";
 export { CFieldStatus } from "@/design-system/c-field-status/c-field-status";
 export type { FieldStatus } from "@/design-system/c-field-status/c-field-status";
 export { CInput } from "@/design-system/c-input/c-input";

@@ -7,21 +7,31 @@ import "./c-progress.scss";
 type CProgressProps = {
   current: number;
   total: number;
+  /** Accessible name, e.g. "Paso 3 de 8". */
+  label?: string;
   className?: string;
 };
 
-export function CProgress({ current, total, className }: CProgressProps) {
+export function CProgress({
+  current,
+  total,
+  label,
+  className,
+}: CProgressProps) {
   const safeTotal = Math.max(total, 1);
   const safeCurrent = Math.min(Math.max(current, 0), safeTotal);
   const classes = ["c-progress", className ?? ""].filter(Boolean).join(" ");
+  const valueText = label ?? `Paso ${safeCurrent} de ${safeTotal}`;
 
   return (
     <div
       className={classes}
       role="progressbar"
+      aria-label={valueText}
       aria-valuemin={1}
       aria-valuemax={safeTotal}
       aria-valuenow={safeCurrent}
+      aria-valuetext={valueText}
     >
       {Array.from({ length: safeTotal }, (_, index) => {
         const filled = index < safeCurrent;

@@ -1,25 +1,30 @@
 import { createElement, type ReactNode } from "react";
 
 import type {
+  Gender,
   LeisureTag,
   WorkArea,
 } from "@/core/constants/survey.constants";
 import {
   Briefcase,
+  CircleHelp,
   Code2,
   Dumbbell,
   Footprints,
   Heart,
   LineChart,
+  Mars,
   Mountain,
   Paintbrush,
   Palette,
   Rocket,
   Scissors,
   Server,
+  Transgender,
   TreePine,
   TrendingUp,
   Utensils,
+  Venus,
   Wine,
 } from "@/core/icons";
 
@@ -53,4 +58,11 @@ export const leisureIcons: Record<LeisureTag, ReactNode> = {
   museums: chipIcon(Palette),
   camping: chipIcon(TreePine),
   painting: chipIcon(Paintbrush),
+};
+
+export const genderIcons: Record<Gender, ReactNode> = {
+  mujer: icon(Venus),
+  hombre: icon(Mars),
+  no_binario: icon(Transgender),
+  prefiero_no_decirlo: icon(CircleHelp),
 };

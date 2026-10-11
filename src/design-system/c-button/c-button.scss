@@ -17,6 +17,14 @@
     background: var(--color-disabled);
     color: rgb(26 31 44 / 45%);
   }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
 }
 
 .c-button--full {

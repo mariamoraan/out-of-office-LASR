@@ -1,7 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 
 import { TEXT_INPUT_DEBOUNCE_MS } from "@/core/constants/app.constants";
 import {
@@ -22,7 +29,7 @@ import { appRoutes } from "@/core/routes/app.routes";
 import {
   CButton,
   CChip,
-  CChipGroup,
+  CChoiceGroup,
   CInput,
   CLoader,
   COptionRow,
@@ -38,6 +45,7 @@ import {
 import type { SurveyResponseDto } from "@/features/survey/infrastructure/survey-response.dto";
 import { useDebouncedCallback } from "@/features/survey/ui/hooks/use-debounced-callback";
 import {
+  genderIcons,
   leisureIcons,
   workAreaIcons,
 } from "@/features/survey/ui/survey-option-meta";
@@ -50,6 +58,10 @@ import {
 import "./survey-flow.scss";
 
 const TEXT_SAVED_VISIBLE_MS = 3000;
+const SURVEY_STEP_FORM_ID = "survey-step-form";
+const SURVEY_STEP_TITLE_ID = "survey-step-title";
+const CONTACT_ERROR_ID = "survey-contact-error";
+const FORM_ERROR_ID = "survey-form-error";
 
 function hasText(value: string | null | undefined) {
   return Boolean(value?.trim());
@@ -82,6 +94,18 @@ function toggleValue<T>(list: T[], value: T): T[] {
   return list.includes(value)
     ? list.filter((item) => item !== value)
     : [...list, value];
+}
+
+function radioTabIndex(
+  isSelected: boolean,
+  isFirst: boolean,
+  hasSelection: boolean,
+) {
+  if (hasSelection) {
+    return isSelected ? 0 : -1;
+  }
+
+  return isFirst ? 0 : -1;
 }
 
 export function SurveyFlow() {
@@ -294,26 +318,42 @@ export function SurveyFlow() {
   };
 
   const continueEnabled = useMemo(() => {
-    if (!draft) {
+    if (!draft || isSubmitting || savingKey !== null) {
       return false;
     }
 
-    return (
-      canContinue(stepId, draft) && !isSubmitting && savingKey === null
-    );
+    // Contact: keep enabled so Enter/click can surface the validation error.
+    if (stepId === "contact") {
+      return true;
+    }
+
+    return canContinue(stepId, draft);
   }, [draft, isSubmitting, savingKey, stepId]);
+
+  const handleStepSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!continueEnabled) {
+      return;
+    }
+
+    void handleContinue();
+  };
 
   if (isLoading || !draft) {
     return (
       <main className="f-survey-flow f-survey-flow--loading">
         {error && !isLoading ? (
-          <p className="f-survey-flow__error">{error}</p>
+          <p className="f-survey-flow__error" role="alert">
+            {error}
+          </p>
         ) : (
-          <CLoader />
+          <CLoader label={t.common.loading} showLabel={false} />
         )}
       </main>
     );
   }
+
+  const contactInvalid = Boolean(contactError);
 
   return (
     <CStepShell
@@ -324,14 +364,24 @@ export function SurveyFlow() {
       stepKey={stepId}
       currentStep={stepIndex + 1}
       totalSteps={SURVEY_STEP_COUNT}
+      titleId={SURVEY_STEP_TITLE_ID}
+      progressLabel={t.a11y.progress(stepIndex + 1, SURVEY_STEP_COUNT)}
+      backLabel={t.common.back}
       onBack={handleBack}
       footer={
         <div className="f-survey-flow__footer">
-          {error ? <p className="f-survey-flow__error">{error}</p> : null}
+          {error ? (
+            <p
+              id={FORM_ERROR_ID}
+              className="f-survey-flow__error"
+              role="alert"
+            >
+              {error}
+            </p>
+          ) : null}
           <CButton
-            onClick={() => {
-              void handleContinue();
-            }}
+            type="submit"
+            form={SURVEY_STEP_FORM_ID}
             disabled={!continueEnabled}
           >
             {stepId === "meeting" ? t.common.submit : t.common.continue}
@@ -339,214 +389,254 @@ export function SurveyFlow() {
         </div>
       }
     >
-      {stepId === "fullName" ? (
-        <CInput
-          id="full-name"
-          value={draft.fullName ?? ""}
-          placeholder={t.survey.steps.fullName.placeholder}
-          status={fieldStatus("fullName", "text")}
-          onChange={(value) => {
-            saveDebounced("fullName", { fullName: value });
-          }}
-          autoComplete="name"
-        />
-      ) : null}
-
-      {stepId === "ageGroup" ? (
-        <div className="f-survey-flow__stack">
-          {AGE_GROUPS.map((ageGroup) => (
-            <COptionRow
-              key={ageGroup}
-              label={t.survey.labels.ageGroups[ageGroup]}
-              selected={draft.ageGroup === ageGroup}
-              status={fieldStatus(`ageGroup:${ageGroup}`, "selection")}
-              onClick={() => {
-                void saveImmediate(`ageGroup:${ageGroup}`, {
-                  ageGroup: ageGroup as AgeGroup,
-                });
-              }}
-            />
-          ))}
-        </div>
-      ) : null}
-
-      {stepId === "contact" ? (
-        <div className="f-survey-flow__stack">
+      <form id={SURVEY_STEP_FORM_ID} onSubmit={handleStepSubmit} noValidate>
+        {stepId === "fullName" ? (
           <CInput
-            id="email"
-            label={t.survey.steps.contact.emailLabel}
-            value={draft.email ?? ""}
-            placeholder={t.survey.steps.contact.emailPlaceholder}
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            leading={<AtSign size={18} strokeWidth={1.75} />}
-            status={fieldStatus("email", "text")}
+            id="full-name"
+            value={draft.fullName ?? ""}
+            placeholder={t.survey.steps.fullName.placeholder}
+            status={fieldStatus("fullName", "text")}
+            ariaLabelledBy={SURVEY_STEP_TITLE_ID}
             onChange={(value) => {
-              setContactError(null);
-              saveDebounced("email", { email: value });
+              saveDebounced("fullName", { fullName: value });
             }}
+            autoComplete="name"
           />
-          <CInput
-            id="whatsapp"
-            label={t.survey.steps.contact.whatsappLabel}
-            value={draft.whatsapp ?? ""}
-            placeholder={t.survey.steps.contact.whatsappPlaceholder}
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            leading={<MessageCircle size={18} strokeWidth={1.75} />}
-            status={fieldStatus("whatsapp", "text")}
-            onChange={(value) => {
-              setContactError(null);
-              saveDebounced("whatsapp", { whatsapp: value });
-            }}
-          />
-          {contactError ? (
-            <p className="f-survey-flow__error">{contactError}</p>
-          ) : null}
-        </div>
-      ) : null}
+        ) : null}
 
-      {stepId === "social" ? (
-        <div className="f-survey-flow__stack">
-          <CInput
-            id="linkedin"
-            label={t.survey.steps.social.linkedin}
-            value={draft.linkedin ?? ""}
-            placeholder={t.survey.steps.social.placeholder}
-            leading={<Link2 size={18} strokeWidth={1.75} />}
-            status={fieldStatus("linkedin", "text")}
-            onChange={(value) => {
-              saveDebounced("linkedin", { linkedin: value });
-            }}
-          />
-          <CInput
-            id="instagram"
-            label={t.survey.steps.social.instagram}
-            value={draft.instagram ?? ""}
-            placeholder={t.survey.steps.social.placeholder}
-            leading={<Share2 size={18} strokeWidth={1.75} />}
-            status={fieldStatus("instagram", "text")}
-            onChange={(value) => {
-              saveDebounced("instagram", { instagram: value });
-            }}
-          />
-          <CInput
-            id="x-handle"
-            label={t.survey.steps.social.x}
-            value={draft.xHandle ?? ""}
-            placeholder={t.survey.steps.social.placeholder}
-            leading={<AtSign size={18} strokeWidth={1.75} />}
-            status={fieldStatus("xHandle", "text")}
-            onChange={(value) => {
-              saveDebounced("xHandle", { xHandle: value });
-            }}
-          />
-        </div>
-      ) : null}
-
-      {stepId === "work" ? (
-        <div className="f-survey-flow__stack">
-          {WORK_AREAS.map((workArea) => (
-            <COptionRow
-              key={workArea}
-              label={t.survey.labels.workAreas[workArea]}
-              icon={workAreaIcons[workArea]}
-              selected={draft.workAreas.includes(workArea)}
-              status={fieldStatus(`work:${workArea}`, "selection")}
-              onClick={() => {
-                const workAreas = toggleValue(
-                  draft.workAreas,
-                  workArea,
-                ) as WorkArea[];
-                void saveImmediate(`work:${workArea}`, { workAreas });
-              }}
-            />
-          ))}
-          {draft.workAreas.includes("other_tech") ? (
-            <CInput
-              id="work-other"
-              label={t.common.other}
-              value={draft.workAreaOther ?? ""}
-              placeholder={t.common.otherPlaceholder}
-              status={fieldStatus("workAreaOther", "text")}
-              onChange={(value) => {
-                saveDebounced("workAreaOther", { workAreaOther: value });
-              }}
-            />
-          ) : null}
-        </div>
-      ) : null}
-
-      {stepId === "leisure" ? (
-        <div className="f-survey-flow__stack">
-          <CChipGroup>
-            {LEISURE_TAGS.map((tag) => (
-              <CChip
-                key={tag}
-                label={t.survey.labels.leisure[tag]}
-                icon={leisureIcons[tag as LeisureTag]}
-                selected={draft.leisureTags.includes(tag)}
-                status={fieldStatus(`leisure:${tag}`, "selection")}
+        {stepId === "ageGroup" ? (
+          <CChoiceGroup mode="single" labelledBy={SURVEY_STEP_TITLE_ID}>
+            {AGE_GROUPS.map((ageGroup, index) => (
+              <COptionRow
+                key={ageGroup}
+                label={t.survey.labels.ageGroups[ageGroup]}
+                selected={draft.ageGroup === ageGroup}
+                selection="radio"
+                tabIndex={radioTabIndex(
+                  draft.ageGroup === ageGroup,
+                  index === 0,
+                  Boolean(draft.ageGroup),
+                )}
+                status={fieldStatus(`ageGroup:${ageGroup}`, "selection")}
+                enterSubmitsFormId={SURVEY_STEP_FORM_ID}
                 onClick={() => {
-                  const leisureTags = toggleValue(draft.leisureTags, tag);
-                  void saveImmediate(`leisure:${tag}`, { leisureTags });
+                  void saveImmediate(`ageGroup:${ageGroup}`, {
+                    ageGroup: ageGroup as AgeGroup,
+                  });
                 }}
               />
             ))}
-          </CChipGroup>
-          <CInput
-            id="leisure-other"
-            label={t.common.other}
-            value={draft.leisureOther ?? ""}
-            placeholder={t.common.otherPlaceholder}
-            status={fieldStatus("leisureOther", "text")}
-            onChange={(value) => {
-              saveDebounced("leisureOther", { leisureOther: value });
-            }}
-          />
-        </div>
-      ) : null}
+          </CChoiceGroup>
+        ) : null}
 
-      {stepId === "gender" ? (
-        <div className="f-survey-flow__stack">
-          {GENDERS.map((gender) => (
-            <COptionRow
-              key={gender}
-              label={t.survey.labels.genders[gender]}
-              selected={draft.gender === gender}
-              status={fieldStatus(`gender:${gender}`, "selection")}
-              onClick={() => {
-                void saveImmediate(`gender:${gender}`, {
-                  gender: gender as Gender,
-                });
+        {stepId === "contact" ? (
+          <div className="f-survey-flow__stack">
+            <CInput
+              id="email"
+              label={t.survey.steps.contact.emailLabel}
+              value={draft.email ?? ""}
+              placeholder={t.survey.steps.contact.emailPlaceholder}
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              leading={<AtSign size={18} strokeWidth={1.75} />}
+              status={fieldStatus("email", "text")}
+              ariaInvalid={contactInvalid}
+              ariaDescribedBy={contactInvalid ? CONTACT_ERROR_ID : undefined}
+              onChange={(value) => {
+                setContactError(null);
+                saveDebounced("email", { email: value });
               }}
             />
-          ))}
-        </div>
-      ) : null}
-
-      {stepId === "meeting" ? (
-        <div className="f-survey-flow__stack">
-          {MEETING_SLOTS.map((slot) => (
-            <COptionRow
-              key={slot}
-              label={t.survey.labels.meetingSlots[slot]}
-              icon={<Calendar size={18} strokeWidth={1.75} />}
-              selected={draft.meetingSlots.includes(slot)}
-              status={fieldStatus(`meeting:${slot}`, "selection")}
-              onClick={() => {
-                const meetingSlots = toggleValue(
-                  draft.meetingSlots,
-                  slot,
-                ) as MeetingSlot[];
-                void saveImmediate(`meeting:${slot}`, { meetingSlots });
+            <CInput
+              id="whatsapp"
+              label={t.survey.steps.contact.whatsappLabel}
+              value={draft.whatsapp ?? ""}
+              placeholder={t.survey.steps.contact.whatsappPlaceholder}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              leading={<MessageCircle size={18} strokeWidth={1.75} />}
+              status={fieldStatus("whatsapp", "text")}
+              ariaInvalid={contactInvalid}
+              ariaDescribedBy={contactInvalid ? CONTACT_ERROR_ID : undefined}
+              onChange={(value) => {
+                setContactError(null);
+                saveDebounced("whatsapp", { whatsapp: value });
               }}
             />
-          ))}
-        </div>
-      ) : null}
+            {contactError ? (
+              <p
+                id={CONTACT_ERROR_ID}
+                className="f-survey-flow__error"
+                role="alert"
+              >
+                {contactError}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {stepId === "social" ? (
+          <div className="f-survey-flow__stack">
+            <CInput
+              id="linkedin"
+              label={t.survey.steps.social.linkedin}
+              value={draft.linkedin ?? ""}
+              placeholder={t.survey.steps.social.placeholder}
+              leading={<Link2 size={18} strokeWidth={1.75} />}
+              status={fieldStatus("linkedin", "text")}
+              onChange={(value) => {
+                saveDebounced("linkedin", { linkedin: value });
+              }}
+            />
+            <CInput
+              id="instagram"
+              label={t.survey.steps.social.instagram}
+              value={draft.instagram ?? ""}
+              placeholder={t.survey.steps.social.placeholder}
+              leading={<Share2 size={18} strokeWidth={1.75} />}
+              status={fieldStatus("instagram", "text")}
+              onChange={(value) => {
+                saveDebounced("instagram", { instagram: value });
+              }}
+            />
+            <CInput
+              id="x-handle"
+              label={t.survey.steps.social.x}
+              value={draft.xHandle ?? ""}
+              placeholder={t.survey.steps.social.placeholder}
+              leading={<AtSign size={18} strokeWidth={1.75} />}
+              status={fieldStatus("xHandle", "text")}
+              onChange={(value) => {
+                saveDebounced("xHandle", { xHandle: value });
+              }}
+            />
+          </div>
+        ) : null}
+
+        {stepId === "work" ? (
+          <div className="f-survey-flow__stack">
+            <CChoiceGroup mode="multi" labelledBy={SURVEY_STEP_TITLE_ID}>
+              {WORK_AREAS.map((workArea) => (
+                <COptionRow
+                  key={workArea}
+                  label={t.survey.labels.workAreas[workArea]}
+                  icon={workAreaIcons[workArea]}
+                  selected={draft.workAreas.includes(workArea)}
+                  selection="checkbox"
+                  status={fieldStatus(`work:${workArea}`, "selection")}
+                  enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+                  onClick={() => {
+                    const workAreas = toggleValue(
+                      draft.workAreas,
+                      workArea,
+                    ) as WorkArea[];
+                    void saveImmediate(`work:${workArea}`, { workAreas });
+                  }}
+                />
+              ))}
+            </CChoiceGroup>
+            {draft.workAreas.includes("other_tech") ? (
+              <CInput
+                id="work-other"
+                label={t.common.other}
+                value={draft.workAreaOther ?? ""}
+                placeholder={t.common.otherPlaceholder}
+                status={fieldStatus("workAreaOther", "text")}
+                onChange={(value) => {
+                  saveDebounced("workAreaOther", { workAreaOther: value });
+                }}
+              />
+            ) : null}
+          </div>
+        ) : null}
+
+        {stepId === "leisure" ? (
+          <div className="f-survey-flow__stack">
+            <CChoiceGroup
+              mode="multi"
+              labelledBy={SURVEY_STEP_TITLE_ID}
+              className="c-choice-group--chips"
+            >
+              {LEISURE_TAGS.map((tag) => (
+                <CChip
+                  key={tag}
+                  label={t.survey.labels.leisure[tag]}
+                  icon={leisureIcons[tag as LeisureTag]}
+                  selected={draft.leisureTags.includes(tag)}
+                  selection="checkbox"
+                  status={fieldStatus(`leisure:${tag}`, "selection")}
+                  enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+                  onClick={() => {
+                    const leisureTags = toggleValue(draft.leisureTags, tag);
+                    void saveImmediate(`leisure:${tag}`, { leisureTags });
+                  }}
+                />
+              ))}
+            </CChoiceGroup>
+            <CInput
+              id="leisure-other"
+              label={t.common.other}
+              value={draft.leisureOther ?? ""}
+              placeholder={t.common.otherPlaceholder}
+              status={fieldStatus("leisureOther", "text")}
+              onChange={(value) => {
+                saveDebounced("leisureOther", { leisureOther: value });
+              }}
+            />
+          </div>
+        ) : null}
+
+        {stepId === "gender" ? (
+          <CChoiceGroup mode="single" labelledBy={SURVEY_STEP_TITLE_ID}>
+            {GENDERS.map((gender, index) => (
+              <COptionRow
+                key={gender}
+                label={t.survey.labels.genders[gender]}
+                icon={genderIcons[gender]}
+                selected={draft.gender === gender}
+                selection="radio"
+                tabIndex={radioTabIndex(
+                  draft.gender === gender,
+                  index === 0,
+                  Boolean(draft.gender),
+                )}
+                status={fieldStatus(`gender:${gender}`, "selection")}
+                enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+                onClick={() => {
+                  void saveImmediate(`gender:${gender}`, {
+                    gender: gender as Gender,
+                  });
+                }}
+              />
+            ))}
+          </CChoiceGroup>
+        ) : null}
+
+        {stepId === "meeting" ? (
+          <CChoiceGroup mode="multi" labelledBy={SURVEY_STEP_TITLE_ID}>
+            {MEETING_SLOTS.map((slot) => (
+              <COptionRow
+                key={slot}
+                label={t.survey.labels.meetingSlots[slot]}
+                icon={<Calendar size={18} strokeWidth={1.75} />}
+                selected={draft.meetingSlots.includes(slot)}
+                selection="checkbox"
+                status={fieldStatus(`meeting:${slot}`, "selection")}
+                enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+                onClick={() => {
+                  const meetingSlots = toggleValue(
+                    draft.meetingSlots,
+                    slot,
+                  ) as MeetingSlot[];
+                  void saveImmediate(`meeting:${slot}`, { meetingSlots });
+                }}
+              />
+            ))}
+          </CChoiceGroup>
+        ) : null}
+      </form>
     </CStepShell>
   );
 }

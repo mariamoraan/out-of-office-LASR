@@ -25,6 +25,9 @@ type CInputProps = {
   name?: string;
   disabled?: boolean;
   className?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
+  ariaInvalid?: boolean;
 };
 
 export function CInput({
@@ -43,6 +46,9 @@ export function CInput({
   name,
   disabled = false,
   className,
+  ariaLabelledBy,
+  ariaDescribedBy,
+  ariaInvalid,
 }: CInputProps) {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -50,12 +56,19 @@ export function CInput({
 
   const classes = ["c-input", className ?? ""].filter(Boolean).join(" ");
   const showStatus = status !== "idle";
+  const hintId = hint ? `${id}-hint` : undefined;
+  const describedBy =
+    [ariaDescribedBy, hintId].filter(Boolean).join(" ") || undefined;
 
   return (
     <label className={classes} htmlFor={id}>
       {label ? <span className="c-input__label">{label}</span> : null}
       <span className="c-input__field">
-        {leading ? <span className="c-input__leading">{leading}</span> : null}
+        {leading ? (
+          <span className="c-input__leading" aria-hidden>
+            {leading}
+          </span>
+        ) : null}
         <input
           id={id}
           className="c-input__control"
@@ -67,6 +80,9 @@ export function CInput({
           autoComplete={autoComplete}
           inputMode={inputMode}
           disabled={disabled}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={describedBy}
+          aria-invalid={ariaInvalid || undefined}
         />
         {showStatus ? (
           <span className="c-input__trailing">
@@ -76,7 +92,11 @@ export function CInput({
           <span className="c-input__trailing">{trailing}</span>
         ) : null}
       </span>
-      {hint ? <span className="c-input__hint">{hint}</span> : null}
+      {hint ? (
+        <span id={hintId} className="c-input__hint">
+          {hint}
+        </span>
+      ) : null}
     </label>
   );
 }

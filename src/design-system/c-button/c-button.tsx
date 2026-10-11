@@ -8,6 +8,7 @@ import "./c-button.scss";
 type CButtonProps = {
   children: ReactNode;
   type?: "button" | "submit" | "reset";
+  form?: string;
   variant?: "primary" | "ghost";
   disabled?: boolean;
   fullWidth?: boolean;
@@ -18,6 +19,7 @@ type CButtonProps = {
 export function CButton({
   children,
   type = "button",
+  form,
   variant = "primary",
   disabled = false,
   fullWidth = true,
@@ -37,6 +39,7 @@ export function CButton({
     <motion.button
       className={classes}
       type={type}
+      form={form}
       disabled={disabled}
       onClick={onClick}
       whileTap={disabled ? undefined : { scale: 0.985 }}

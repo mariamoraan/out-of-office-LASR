@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import { ChevronLeft } from "@/core/icons";
 import { CProgress } from "@/design-system/c-progress/c-progress";
@@ -15,6 +15,9 @@ type CStepShellProps = {
   stepKey: string;
   currentStep: number;
   totalSteps: number;
+  titleId?: string;
+  progressLabel?: string;
+  backLabel?: string;
   onBack?: () => void;
   footer?: ReactNode;
   children: ReactNode;
@@ -28,17 +31,36 @@ export function CStepShell({
   stepKey,
   currentStep,
   totalSteps,
+  titleId = "survey-step-title",
+  progressLabel,
+  backLabel = "Volver",
   onBack,
   footer,
   children,
   className,
 }: CStepShellProps) {
   const classes = ["c-step-shell", className ?? ""].filter(Boolean).join(" ");
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  const focusTitle = () => {
+    titleRef.current?.focus({ preventScroll: true });
+  };
+
+  useEffect(() => {
+    // AnimatePresence mode="wait" mounts the next step after exit;
+    // delay so the new title node exists.
+    const timer = window.setTimeout(focusTitle, 300);
+    return () => window.clearTimeout(timer);
+  }, [stepKey]);
 
   return (
-    <div className={classes}>
+    <main className={classes}>
       <div className="c-step-shell__progress">
-        <CProgress current={currentStep} total={totalSteps} />
+        <CProgress
+          current={currentStep}
+          total={totalSteps}
+          label={progressLabel}
+        />
       </div>
 
       <header className="c-step-shell__header">
@@ -48,7 +70,7 @@ export function CStepShell({
               type="button"
               className="c-step-shell__back"
               onClick={onBack}
-              aria-label="Volver"
+              aria-label={backLabel}
             >
               <ChevronLeft size={22} strokeWidth={1.75} />
             </button>
@@ -69,8 +91,16 @@ export function CStepShell({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            onAnimationComplete={focusTitle}
           >
-            <h1 className="c-step-shell__title">{title}</h1>
+            <h1
+              ref={titleRef}
+              id={titleId}
+              className="c-step-shell__title"
+              tabIndex={-1}
+            >
+              {title}
+            </h1>
             {subtitle ? (
               <p className="c-step-shell__subtitle">{subtitle}</p>
             ) : null}
@@ -80,6 +110,6 @@ export function CStepShell({
       </div>
 
       {footer ? <footer className="c-step-shell__footer">{footer}</footer> : null}
-    </div>
+    </main>
   );
 }

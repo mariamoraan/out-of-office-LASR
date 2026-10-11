@@ -9,6 +9,13 @@ export const es = {
     back: "Volver",
     other: "Otro",
     otherPlaceholder: "Especifica…",
+    loading: "Cargando",
+    saving: "Guardando",
+    saved: "Guardado",
+  },
+  a11y: {
+    progress: (current: number, total: number) =>
+      `Paso ${current} de ${total}`,
   },
   home: {
     title: "Únete al grupo",

@@ -40,6 +40,18 @@
   &:hover {
     background: rgb(26 31 44 / 4%);
   }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.c-step-shell__title:focus {
+  outline: none;
 }
 
 .c-step-shell__back-spacer {

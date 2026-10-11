@@ -5,11 +5,18 @@ import { motion } from "motion/react";
 import "./c-loader.scss";
 
 type CLoaderProps = {
+  /** Accessible status text (screen reader). */
   label?: string;
+  /** When true, also show `label` visually. */
+  showLabel?: boolean;
   className?: string;
 };
 
-export function CLoader({ label, className }: CLoaderProps) {
+export function CLoader({
+  label = "Cargando",
+  showLabel = false,
+  className,
+}: CLoaderProps) {
   const classes = ["c-loader", className ?? ""].filter(Boolean).join(" ");
 
   return (
@@ -48,8 +55,8 @@ export function CLoader({ label, className }: CLoaderProps) {
         </div>
       </div>
 
-      {label ? <p className="c-loader__label">{label}</p> : null}
-      <span className="c-loader__sr-only">Loading</span>
+      {showLabel ? <p className="c-loader__label">{label}</p> : null}
+      <span className="c-loader__sr-only">{label}</span>
     </div>
   );
 }

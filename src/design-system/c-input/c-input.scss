@@ -25,7 +25,7 @@
 
   &:focus-within {
     border-color: var(--color-primary-strong);
-    box-shadow: 0 0 0 3px rgb(142 184 229 / 28%);
+    box-shadow: var(--focus-ring);
   }
 }
 

@@ -11,9 +11,16 @@ export type FieldStatus = "idle" | "saving" | "saved";
 type CFieldStatusProps = {
   status: FieldStatus;
   className?: string;
+  savingLabel?: string;
+  savedLabel?: string;
 };
 
-export function CFieldStatus({ status, className }: CFieldStatusProps) {
+export function CFieldStatus({
+  status,
+  className,
+  savingLabel = "Guardando",
+  savedLabel = "Guardado",
+}: CFieldStatusProps) {
   if (status === "idle") {
     return (
       <span
@@ -28,7 +35,7 @@ export function CFieldStatus({ status, className }: CFieldStatusProps) {
   return (
     <span className={classes} aria-live="polite">
       {status === "saving" ? (
-        <span className="c-field-status__spinner" aria-label="Saving">
+        <span className="c-field-status__spinner" aria-label={savingLabel}>
           <LoaderCircle size={18} strokeWidth={2.25} />
         </span>
       ) : (
@@ -37,7 +44,7 @@ export function CFieldStatus({ status, className }: CFieldStatusProps) {
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.18 }}
-          aria-label="Saved"
+          aria-label={savedLabel}
         >
           <Check size={18} strokeWidth={2.25} />
         </motion.span>
