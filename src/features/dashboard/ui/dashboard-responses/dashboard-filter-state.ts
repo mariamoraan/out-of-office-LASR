@@ -19,7 +19,7 @@ export type FilterState = {
 };
 
 export const INITIAL_FILTERS: FilterState = {
-  status: null,
+  status: "submitted",
   ageGroups: [],
   workAreas: [],
   meetingSlots: [],
