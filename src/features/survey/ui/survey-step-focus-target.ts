@@ -1,15 +1,10 @@
 import type { SurveyStepId } from "@/features/survey/domain/survey-steps";
 
 export type SurveyStepFocusDraft = {
-  fullName: string | null;
   ageGroup: string | null;
   email: string | null;
   whatsapp: string | null;
-  linkedin: string | null;
-  instagram: string | null;
-  xHandle: string | null;
   workAreas: string[];
-  workAreaOther: string | null;
   leisureTags: string[];
   leisureOther: string | null;
   gender: string | null;
@@ -18,15 +13,7 @@ export type SurveyStepFocusDraft = {
 };
 
 export type SurveyStepFocusTarget =
-  | "fullName"
-  | "email"
-  | "whatsapp"
   | "privacyConsent"
-  | "linkedin"
-  | "instagram"
-  | "xHandle"
-  | "workAreaOther"
-  | "leisureOther"
   | "ageGroupFirst"
   | "genderFirst"
   | "workFirst"
@@ -39,7 +26,10 @@ function hasText(value: string | null | undefined): boolean {
 
 /**
  * Returns which control should receive focus when entering a survey step,
- * or null when the step is already satisfied.
+ * or null when the step title should receive focus instead.
+ *
+ * Text inputs are never autofocused (avoids opening the mobile keyboard
+ * mid step-transition). Choice rows, chips, and consent stay eligible.
  */
 export function getSurveyStepFocusTarget(
   stepId: SurveyStepId,
@@ -47,43 +37,25 @@ export function getSurveyStepFocusTarget(
 ): SurveyStepFocusTarget | null {
   switch (stepId) {
     case "fullName":
-      return hasText(draft.fullName) ? null : "fullName";
+      return null;
 
     case "ageGroup":
       return draft.ageGroup ? null : "ageGroupFirst";
 
     case "contact":
-      if (!hasText(draft.email) && !hasText(draft.whatsapp)) {
-        return "email";
-      }
-      if (!draft.privacyConsentAcceptedAt) {
+      if (
+        (hasText(draft.email) || hasText(draft.whatsapp)) &&
+        !draft.privacyConsentAcceptedAt
+      ) {
         return "privacyConsent";
       }
       return null;
 
     case "social":
-      if (!hasText(draft.linkedin)) {
-        return "linkedin";
-      }
-      if (!hasText(draft.instagram)) {
-        return "instagram";
-      }
-      if (!hasText(draft.xHandle)) {
-        return "xHandle";
-      }
       return null;
 
     case "work":
-      if (draft.workAreas.length === 0) {
-        return "workFirst";
-      }
-      if (
-        draft.workAreas.includes("other_tech") &&
-        !hasText(draft.workAreaOther)
-      ) {
-        return "workAreaOther";
-      }
-      return null;
+      return draft.workAreas.length === 0 ? "workFirst" : null;
 
     case "leisure":
       if (draft.leisureTags.length === 0 && !hasText(draft.leisureOther)) {

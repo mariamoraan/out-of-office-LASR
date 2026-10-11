@@ -559,7 +559,6 @@ export function SurveyFlow() {
       <form id={SURVEY_STEP_FORM_ID} onSubmit={handleStepSubmit} noValidate>
         {stepId === "fullName" ? (
           <CInput
-            ref={focusRefFor("fullName")}
             id="full-name"
             value={draft.fullName ?? ""}
             placeholder={t.survey.steps.fullName.placeholder}
@@ -601,7 +600,6 @@ export function SurveyFlow() {
         {stepId === "contact" ? (
           <div className="f-survey-flow__stack">
             <CInput
-              ref={focusRefFor("email")}
               id="email"
               label={t.survey.steps.contact.emailLabel}
               value={draft.email ?? ""}
@@ -619,7 +617,6 @@ export function SurveyFlow() {
               }}
             />
             <CInput
-              ref={focusRefFor("whatsapp")}
               id="whatsapp"
               label={t.survey.steps.contact.whatsappLabel}
               value={draft.whatsapp ?? ""}
@@ -685,7 +682,6 @@ export function SurveyFlow() {
         {stepId === "social" ? (
           <div className="f-survey-flow__stack">
             <CInput
-              ref={focusRefFor("linkedin")}
               id="linkedin"
               label={t.survey.steps.social.linkedin}
               value={draft.linkedin ?? ""}
@@ -697,7 +693,6 @@ export function SurveyFlow() {
               }}
             />
             <CInput
-              ref={focusRefFor("instagram")}
               id="instagram"
               label={t.survey.steps.social.instagram}
               value={draft.instagram ?? ""}
@@ -709,7 +704,6 @@ export function SurveyFlow() {
               }}
             />
             <CInput
-              ref={focusRefFor("xHandle")}
               id="x-handle"
               label={t.survey.steps.social.x}
               value={draft.xHandle ?? ""}
@@ -748,7 +742,6 @@ export function SurveyFlow() {
             </CChoiceGroup>
             {draft.workAreas.includes("other_tech") ? (
               <CInput
-                ref={focusRefFor("workAreaOther")}
                 id="work-other"
                 label={t.common.other}
                 value={draft.workAreaOther ?? ""}
