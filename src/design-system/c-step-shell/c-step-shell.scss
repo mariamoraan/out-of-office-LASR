@@ -5,7 +5,10 @@
   min-height: 100dvh;
   max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: var(--space-4) var(--space-5) var(--space-5);
+  padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
+  padding-right: calc(var(--space-5) + env(safe-area-inset-right, 0px));
+  padding-bottom: var(--space-5);
+  padding-left: calc(var(--space-5) + env(safe-area-inset-left, 0px));
 }
 
 .c-step-shell__progress {
@@ -105,7 +108,7 @@
   bottom: 0;
   margin-top: auto;
   padding-top: var(--space-5);
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(
     180deg,
     rgb(248 233 223 / 0%) 0%,

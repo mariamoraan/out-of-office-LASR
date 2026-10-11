@@ -2,7 +2,10 @@
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: var(--space-5);
+  padding-top: calc(var(--space-5) + env(safe-area-inset-top, 0px));
+  padding-right: calc(var(--space-5) + env(safe-area-inset-right, 0px));
+  padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(var(--space-5) + env(safe-area-inset-left, 0px));
 }
 
 .f-survey-flow__stack {
