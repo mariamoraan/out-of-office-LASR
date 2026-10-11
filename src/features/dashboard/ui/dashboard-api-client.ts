@@ -131,3 +131,33 @@ export async function fetchAdminSurveyResponses(
 
   return payload as AdminSurveyListResponse;
 }
+
+export type AdminSurveyDeleteResponse = {
+  deleted: number;
+};
+
+export async function deleteAdminSurveyResponsesRequest(
+  ids: string[],
+): Promise<AdminSurveyDeleteResponse> {
+  const response = await fetch("/api/dashboard/responses", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ids }),
+  });
+
+  const payload = (await response.json()) as
+    | AdminSurveyDeleteResponse
+    | AdminApiError;
+
+  if (!response.ok) {
+    if ("error" in payload) {
+      throw new DashboardApiError(payload.error.code, payload.error.message);
+    }
+
+    throw new DashboardApiError("INTERNAL_ERROR", "Request failed");
+  }
+
+  return payload as AdminSurveyDeleteResponse;
+}

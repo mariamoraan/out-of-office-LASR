@@ -13,15 +13,17 @@ import {
 
 import { TEXT_INPUT_DEBOUNCE_MS } from "@/core/constants/app.constants";
 import { getDictionary } from "@/core/i18n";
-import { ListFilter, LogOut, RefreshCw } from "@/core/icons";
+import { ListFilter, LogOut, RefreshCw, Trash2 } from "@/core/icons";
 import { appRoutes } from "@/core/routes/app.routes";
 import { ADMIN_SURVEY_LIST_DEFAULT_PAGE_SIZE } from "@/features/dashboard/domain/admin-survey-filters";
 import type { AdminSurveyResponseDto } from "@/features/dashboard/infrastructure/admin-survey-response.dto";
 import {
+  deleteAdminSurveyResponsesRequest,
   fetchAdminSurveyResponses,
   logoutAdminRequest,
   type AdminSurveyListQuery,
 } from "@/features/dashboard/ui/dashboard-api-client";
+import { DashboardConfirmDialog } from "@/features/dashboard/ui/dashboard-confirm-dialog/dashboard-confirm-dialog";
 import { DashboardFiltersSheet } from "@/features/dashboard/ui/dashboard-filters-sheet/dashboard-filters-sheet";
 import { DashboardResponseDetailPanel } from "@/features/dashboard/ui/dashboard-response-detail-panel/dashboard-response-detail-panel";
 import {
@@ -83,10 +85,21 @@ export function DashboardResponses() {
   const [reloadKey, setReloadKey] = useState(0);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
   const [selected, setSelected] = useState<AdminSurveyResponseDto | null>(null);
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(() => new Set());
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
   const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
   const closeDetail = useCallback(() => setSelected(null), []);
   const closeFiltersSheet = useCallback(() => setFiltersSheetOpen(false), []);
+  const closeConfirmDelete = useCallback(() => {
+    if (deleting) {
+      return;
+    }
+    setConfirmDeleteOpen(false);
+    setDeleteError(null);
+  }, [deleting]);
   const {
     bodyRef,
     widthPx,
@@ -177,6 +190,64 @@ export function DashboardResponses() {
 
   const totalPages = Math.max(1, Math.ceil(total / query.pageSize));
   const activeFilterCount = countActiveFilters(filters);
+  const pageIds = useMemo(() => items.map((item) => item.id), [items]);
+  const checkedCount = checkedIds.size;
+  const allPageChecked =
+    pageIds.length > 0 && pageIds.every((id) => checkedIds.has(id));
+  const somePageChecked =
+    pageIds.some((id) => checkedIds.has(id)) && !allPageChecked;
+
+  function toggleCheckedId(id: string) {
+    setCheckedIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function togglePageChecked() {
+    setCheckedIds((current) => {
+      const next = new Set(current);
+      if (allPageChecked) {
+        for (const id of pageIds) {
+          next.delete(id);
+        }
+      } else {
+        for (const id of pageIds) {
+          next.add(id);
+        }
+      }
+      return next;
+    });
+  }
+
+  async function handleConfirmDelete() {
+    if (deleting || checkedIds.size === 0) {
+      return;
+    }
+
+    const ids = [...checkedIds];
+    setDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await deleteAdminSurveyResponsesRequest(ids);
+      setCheckedIds(new Set());
+      setConfirmDeleteOpen(false);
+      setSelected((current) =>
+        current && ids.includes(current.id) ? null : current,
+      );
+      setReloadKey((value) => value + 1);
+    } catch {
+      setDeleteError(list.deleteConfirm.error);
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   function patchFilters(
     patch:
@@ -267,6 +338,24 @@ export function DashboardResponses() {
             </p>
           </div>
           <div className="f-dashboard-responses__meta-actions">
+            <CButton
+              type="button"
+              variant="ghost"
+              fullWidth={false}
+              disabled={checkedCount === 0 || deleting}
+              className="f-dashboard-responses__delete"
+              onClick={() => {
+                setDeleteError(null);
+                setConfirmDeleteOpen(true);
+              }}
+            >
+              <span className="f-dashboard-responses__delete-inner">
+                <Trash2 size={16} strokeWidth={1.75} aria-hidden />
+                {checkedCount > 0
+                  ? list.deleteSelectedCount(checkedCount)
+                  : list.deleteSelected}
+              </span>
+            </CButton>
             <CButton
               type="button"
               variant="ghost"
@@ -367,6 +456,26 @@ export function DashboardResponses() {
                   <table className="f-dashboard-responses__table">
                     <thead>
                       <tr>
+                        <th
+                          scope="col"
+                          className="f-dashboard-responses__check-col"
+                        >
+                          <span className="f-dashboard-responses__sr-only">
+                            {list.columns.select}
+                          </span>
+                          <input
+                            type="checkbox"
+                            className="f-dashboard-responses__checkbox"
+                            checked={allPageChecked}
+                            ref={(element) => {
+                              if (element) {
+                                element.indeterminate = somePageChecked;
+                              }
+                            }}
+                            aria-label={list.selectPage}
+                            onChange={togglePageChecked}
+                          />
+                        </th>
                         <th scope="col">{list.columns.status}</th>
                         <th scope="col">{list.columns.name}</th>
                         <th scope="col">{list.columns.age}</th>
@@ -380,6 +489,7 @@ export function DashboardResponses() {
                     <tbody>
                       {items.map((response) => {
                         const isSelected = selected?.id === response.id;
+                        const isChecked = checkedIds.has(response.id);
 
                         return (
                           <tr
@@ -388,6 +498,9 @@ export function DashboardResponses() {
                               "f-dashboard-responses__row",
                               isSelected
                                 ? "f-dashboard-responses__row--selected"
+                                : "",
+                              isChecked
+                                ? "f-dashboard-responses__row--checked"
                                 : "",
                             ]
                               .filter(Boolean)
@@ -400,6 +513,19 @@ export function DashboardResponses() {
                               handleRowKeyDown(event, response)
                             }
                           >
+                            <td
+                              className="f-dashboard-responses__check-col"
+                              onClick={(event) => event.stopPropagation()}
+                              onKeyDown={(event) => event.stopPropagation()}
+                            >
+                              <input
+                                type="checkbox"
+                                className="f-dashboard-responses__checkbox"
+                                checked={isChecked}
+                                aria-label={`${list.selectRow}: ${response.fullName ?? response.id}`}
+                                onChange={() => toggleCheckedId(response.id)}
+                              />
+                            </td>
                             <td>
                               <span
                                 className={[
@@ -523,6 +649,19 @@ export function DashboardResponses() {
       <DashboardResponseDetailPanel
         response={selected}
         onClose={closeDetail}
+      />
+
+      <DashboardConfirmDialog
+        open={confirmDeleteOpen}
+        title={list.deleteConfirm.title}
+        body={list.deleteConfirm.body(checkedCount)}
+        cancelLabel={list.deleteConfirm.cancel}
+        confirmLabel={list.deleteConfirm.confirm}
+        confirmingLabel={list.deleteConfirm.confirming}
+        confirming={deleting}
+        error={deleteError}
+        onCancel={closeConfirmDelete}
+        onConfirm={handleConfirmDelete}
       />
     </main>
   );

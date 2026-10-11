@@ -181,6 +181,7 @@ export const es = {
         resizeDivider: "Redimensionar paneles de filtros y resultados",
       },
       columns: {
+        select: "Seleccionar",
         status: "Estado",
         name: "Nombre",
         age: "Edad",
@@ -196,6 +197,22 @@ export const es = {
       },
       emptyCell: "—",
       openDetail: "Ver detalle",
+      selectRow: "Seleccionar respuesta",
+      selectPage: "Seleccionar todas las respuestas de esta página",
+      deleteSelected: "Eliminar",
+      deleteSelectedCount: (count: number) =>
+        count === 1 ? "Eliminar (1)" : `Eliminar (${count})`,
+      deleteConfirm: {
+        title: "¿Eliminar respuestas?",
+        body: (count: number) =>
+          count === 1
+            ? "¿Estás seguro de que quieres eliminar esta respuesta? Esta acción no se puede deshacer."
+            : `¿Estás seguro de que quieres eliminar ${count} respuestas? Esta acción no se puede deshacer.`,
+        cancel: "Cancelar",
+        confirm: "Eliminar",
+        confirming: "Eliminando…",
+        error: "No se pudieron eliminar las respuestas. Inténtalo de nuevo.",
+      },
     },
     detail: {
       title: "Detalle de la respuesta",

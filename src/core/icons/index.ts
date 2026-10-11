@@ -27,6 +27,7 @@ export {
   Server,
   Share2,
   Sparkles,
+  Trash2,
   Transgender,
   TrendingUp,
   Users,

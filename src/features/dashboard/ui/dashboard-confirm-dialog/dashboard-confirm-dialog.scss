@@ -1,0 +1,77 @@
+.f-dashboard-confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.f-dashboard-confirm-dialog__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgb(43 33 28 / 40%);
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.f-dashboard-confirm-dialog__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 24rem);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.f-dashboard-confirm-dialog__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.f-dashboard-confirm-dialog__body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.f-dashboard-confirm-dialog__error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #9b3b2e;
+}
+
+.f-dashboard-confirm-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.f-dashboard-confirm-dialog__confirm:not(:disabled) {
+  background: #9b3b2e;
+  color: #fff8f4;
+
+  &:hover {
+    background: #7f2f25;
+  }
+}
