@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { TEXT_INPUT_DEBOUNCE_MS } from "@/core/constants/app.constants";
 import {
@@ -27,8 +27,8 @@ import {
   CLoader,
   COptionRow,
   CStepShell,
+  type FieldStatus,
 } from "@/design-system";
-
 import type { SurveyDraftPatch } from "@/features/survey/domain/survey-response";
 import {
   SURVEY_STEP_COUNT,
@@ -48,6 +48,8 @@ import {
 } from "@/features/survey/ui/survey-api-client";
 
 import "./survey-flow.scss";
+
+const TEXT_SAVED_VISIBLE_MS = 3000;
 
 function hasText(value: string | null | undefined) {
   return Boolean(value?.trim());
@@ -88,13 +90,25 @@ export function SurveyFlow() {
   const [draft, setDraft] = useState<SurveyResponseDto | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [contactError, setContactError] = useState<string | null>(null);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [textSavedKey, setTextSavedKey] = useState<string | null>(null);
+  const textSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const stepId = SURVEY_STEPS[stepIndex];
   const stepCopy = t.survey.steps[stepId];
+
+  useEffect(() => {
+    return () => {
+      if (textSavedTimeoutRef.current) {
+        clearTimeout(textSavedTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -134,29 +148,50 @@ export function SurveyFlow() {
     };
   }, [router]);
 
-  const persistPatch = useCallback(async (patch: SurveyDraftPatch) => {
-    setIsSaving(true);
-    setError(null);
+  const markTextSaved = useCallback((key: string) => {
+    setTextSavedKey(key);
 
-    try {
-      const survey = await patchSurveyDraft(patch);
-      setDraft(survey);
-      return survey;
-    } catch (saveError) {
-      setError(
-        saveError instanceof Error
-          ? saveError.message
-          : "No se pudo guardar.",
-      );
-      return null;
-    } finally {
-      setIsSaving(false);
+    if (textSavedTimeoutRef.current) {
+      clearTimeout(textSavedTimeoutRef.current);
     }
+
+    textSavedTimeoutRef.current = setTimeout(() => {
+      setTextSavedKey((current) => (current === key ? null : current));
+      textSavedTimeoutRef.current = null;
+    }, TEXT_SAVED_VISIBLE_MS);
   }, []);
 
+  const persistPatch = useCallback(
+    async (key: string, kind: "selection" | "text", patch: SurveyDraftPatch) => {
+      setSavingKey(key);
+      setError(null);
+
+      try {
+        const survey = await patchSurveyDraft(patch);
+        setDraft(survey);
+
+        if (kind === "text") {
+          markTextSaved(key);
+        }
+
+        return survey;
+      } catch (saveError) {
+        setError(
+          saveError instanceof Error
+            ? saveError.message
+            : "No se pudo guardar.",
+        );
+        return null;
+      } finally {
+        setSavingKey((current) => (current === key ? null : current));
+      }
+    },
+    [markTextSaved],
+  );
+
   const debouncedPersist = useDebouncedCallback(
-    (patch: SurveyDraftPatch) => {
-      void persistPatch(patch);
+    (key: string, patch: SurveyDraftPatch) => {
+      void persistPatch(key, "text", patch);
     },
     TEXT_INPUT_DEBOUNCE_MS,
   );
@@ -166,19 +201,36 @@ export function SurveyFlow() {
   }, []);
 
   const saveImmediate = useCallback(
-    async (patch: SurveyDraftPatch) => {
+    async (key: string, patch: SurveyDraftPatch) => {
       updateLocal(patch);
-      await persistPatch(patch);
+      await persistPatch(key, "selection", patch);
     },
     [persistPatch, updateLocal],
   );
 
   const saveDebounced = useCallback(
-    (patch: SurveyDraftPatch) => {
+    (key: string, patch: SurveyDraftPatch) => {
+      setSavingKey(key);
+      setTextSavedKey((current) => (current === key ? null : current));
       updateLocal(patch);
-      debouncedPersist(patch);
+      debouncedPersist(key, patch);
     },
     [debouncedPersist, updateLocal],
+  );
+
+  const fieldStatus = useCallback(
+    (key: string, kind: "selection" | "text"): FieldStatus => {
+      if (savingKey === key) {
+        return "saving";
+      }
+
+      if (kind === "text" && textSavedKey === key) {
+        return "saved";
+      }
+
+      return "idle";
+    },
+    [savingKey, textSavedKey],
   );
 
   const handleBack = () => {
@@ -192,7 +244,7 @@ export function SurveyFlow() {
   };
 
   const handleContinue = async () => {
-    if (!draft) {
+    if (!draft || savingKey) {
       return;
     }
 
@@ -208,7 +260,7 @@ export function SurveyFlow() {
       setError(null);
 
       try {
-        await persistPatch({
+        await persistPatch("submit", "selection", {
           fullName: draft.fullName,
           email: draft.email,
           whatsapp: draft.whatsapp,
@@ -246,8 +298,10 @@ export function SurveyFlow() {
       return false;
     }
 
-    return canContinue(stepId, draft) && !isSubmitting;
-  }, [draft, isSubmitting, stepId]);
+    return (
+      canContinue(stepId, draft) && !isSubmitting && savingKey === null
+    );
+  }, [draft, isSubmitting, savingKey, stepId]);
 
   if (isLoading || !draft) {
     return (
@@ -282,9 +336,6 @@ export function SurveyFlow() {
           >
             {stepId === "meeting" ? t.common.submit : t.common.continue}
           </CButton>
-          {isSaving ? (
-            <p className="f-survey-flow__status">Guardando…</p>
-          ) : null}
         </div>
       }
     >
@@ -293,8 +344,9 @@ export function SurveyFlow() {
           id="full-name"
           value={draft.fullName ?? ""}
           placeholder={t.survey.steps.fullName.placeholder}
+          status={fieldStatus("fullName", "text")}
           onChange={(value) => {
-            saveDebounced({ fullName: value });
+            saveDebounced("fullName", { fullName: value });
           }}
           autoComplete="name"
         />
@@ -307,8 +359,11 @@ export function SurveyFlow() {
               key={ageGroup}
               label={t.survey.labels.ageGroups[ageGroup]}
               selected={draft.ageGroup === ageGroup}
+              status={fieldStatus(`ageGroup:${ageGroup}`, "selection")}
               onClick={() => {
-                void saveImmediate({ ageGroup: ageGroup as AgeGroup });
+                void saveImmediate(`ageGroup:${ageGroup}`, {
+                  ageGroup: ageGroup as AgeGroup,
+                });
               }}
             />
           ))}
@@ -326,9 +381,10 @@ export function SurveyFlow() {
             inputMode="email"
             autoComplete="email"
             leading={<AtSign size={18} strokeWidth={1.75} />}
+            status={fieldStatus("email", "text")}
             onChange={(value) => {
               setContactError(null);
-              saveDebounced({ email: value });
+              saveDebounced("email", { email: value });
             }}
           />
           <CInput
@@ -340,9 +396,10 @@ export function SurveyFlow() {
             inputMode="tel"
             autoComplete="tel"
             leading={<MessageCircle size={18} strokeWidth={1.75} />}
+            status={fieldStatus("whatsapp", "text")}
             onChange={(value) => {
               setContactError(null);
-              saveDebounced({ whatsapp: value });
+              saveDebounced("whatsapp", { whatsapp: value });
             }}
           />
           {contactError ? (
@@ -359,8 +416,9 @@ export function SurveyFlow() {
             value={draft.linkedin ?? ""}
             placeholder={t.survey.steps.social.placeholder}
             leading={<Link2 size={18} strokeWidth={1.75} />}
+            status={fieldStatus("linkedin", "text")}
             onChange={(value) => {
-              saveDebounced({ linkedin: value });
+              saveDebounced("linkedin", { linkedin: value });
             }}
           />
           <CInput
@@ -369,8 +427,9 @@ export function SurveyFlow() {
             value={draft.instagram ?? ""}
             placeholder={t.survey.steps.social.placeholder}
             leading={<Share2 size={18} strokeWidth={1.75} />}
+            status={fieldStatus("instagram", "text")}
             onChange={(value) => {
-              saveDebounced({ instagram: value });
+              saveDebounced("instagram", { instagram: value });
             }}
           />
           <CInput
@@ -379,8 +438,9 @@ export function SurveyFlow() {
             value={draft.xHandle ?? ""}
             placeholder={t.survey.steps.social.placeholder}
             leading={<AtSign size={18} strokeWidth={1.75} />}
+            status={fieldStatus("xHandle", "text")}
             onChange={(value) => {
-              saveDebounced({ xHandle: value });
+              saveDebounced("xHandle", { xHandle: value });
             }}
           />
         </div>
@@ -394,12 +454,13 @@ export function SurveyFlow() {
               label={t.survey.labels.workAreas[workArea]}
               icon={workAreaIcons[workArea]}
               selected={draft.workAreas.includes(workArea)}
+              status={fieldStatus(`work:${workArea}`, "selection")}
               onClick={() => {
                 const workAreas = toggleValue(
                   draft.workAreas,
                   workArea,
                 ) as WorkArea[];
-                void saveImmediate({ workAreas });
+                void saveImmediate(`work:${workArea}`, { workAreas });
               }}
             />
           ))}
@@ -409,8 +470,9 @@ export function SurveyFlow() {
               label={t.common.other}
               value={draft.workAreaOther ?? ""}
               placeholder={t.common.otherPlaceholder}
+              status={fieldStatus("workAreaOther", "text")}
               onChange={(value) => {
-                saveDebounced({ workAreaOther: value });
+                saveDebounced("workAreaOther", { workAreaOther: value });
               }}
             />
           ) : null}
@@ -426,9 +488,10 @@ export function SurveyFlow() {
                 label={t.survey.labels.leisure[tag]}
                 icon={leisureIcons[tag as LeisureTag]}
                 selected={draft.leisureTags.includes(tag)}
+                status={fieldStatus(`leisure:${tag}`, "selection")}
                 onClick={() => {
                   const leisureTags = toggleValue(draft.leisureTags, tag);
-                  void saveImmediate({ leisureTags });
+                  void saveImmediate(`leisure:${tag}`, { leisureTags });
                 }}
               />
             ))}
@@ -438,8 +501,9 @@ export function SurveyFlow() {
             label={t.common.other}
             value={draft.leisureOther ?? ""}
             placeholder={t.common.otherPlaceholder}
+            status={fieldStatus("leisureOther", "text")}
             onChange={(value) => {
-              saveDebounced({ leisureOther: value });
+              saveDebounced("leisureOther", { leisureOther: value });
             }}
           />
         </div>
@@ -452,8 +516,11 @@ export function SurveyFlow() {
               key={gender}
               label={t.survey.labels.genders[gender]}
               selected={draft.gender === gender}
+              status={fieldStatus(`gender:${gender}`, "selection")}
               onClick={() => {
-                void saveImmediate({ gender: gender as Gender });
+                void saveImmediate(`gender:${gender}`, {
+                  gender: gender as Gender,
+                });
               }}
             />
           ))}
@@ -468,12 +535,13 @@ export function SurveyFlow() {
               label={t.survey.labels.meetingSlots[slot]}
               icon={<Calendar size={18} strokeWidth={1.75} />}
               selected={draft.meetingSlots.includes(slot)}
+              status={fieldStatus(`meeting:${slot}`, "selection")}
               onClick={() => {
                 const meetingSlots = toggleValue(
                   draft.meetingSlots,
                   slot,
                 ) as MeetingSlot[];
-                void saveImmediate({ meetingSlots });
+                void saveImmediate(`meeting:${slot}`, { meetingSlots });
               }}
             />
           ))}

@@ -3,11 +3,17 @@
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
+import {
+  CFieldStatus,
+  type FieldStatus,
+} from "@/design-system/c-field-status/c-field-status";
+
 import "./c-chip.scss";
 
 type CChipProps = {
   label: string;
   selected?: boolean;
+  status?: FieldStatus;
   icon?: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
@@ -17,6 +23,7 @@ type CChipProps = {
 export function CChip({
   label,
   selected = false,
+  status = "idle",
   icon,
   onClick,
   disabled = false,
@@ -30,6 +37,9 @@ export function CChip({
     .filter(Boolean)
     .join(" ");
 
+  const trailingStatus: FieldStatus =
+    status === "saving" ? "saving" : selected ? "saved" : "idle";
+
   return (
     <motion.button
       type="button"
@@ -42,6 +52,9 @@ export function CChip({
     >
       {icon ? <span className="c-chip__icon">{icon}</span> : null}
       <span className="c-chip__label">{label}</span>
+      {trailingStatus !== "idle" ? (
+        <CFieldStatus status={trailingStatus} />
+      ) : null}
     </motion.button>
   );
 }

@@ -48,18 +48,6 @@ export function CLoader({ label, className }: CLoaderProps) {
         </div>
       </div>
 
-      <div className="c-loader__bar" aria-hidden>
-        <motion.span
-          className="c-loader__bar-fill"
-          animate={{ x: ["-40%", "120%"] }}
-          transition={{
-            duration: 1.25,
-            ease: [0.4, 0, 0.2, 1],
-            repeat: Infinity,
-          }}
-        />
-      </div>
-
       {label ? <p className="c-loader__label">{label}</p> : null}
       <span className="c-loader__sr-only">Loading</span>
     </div>

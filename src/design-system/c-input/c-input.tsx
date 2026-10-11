@@ -2,6 +2,11 @@
 
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from "react";
 
+import {
+  CFieldStatus,
+  type FieldStatus,
+} from "@/design-system/c-field-status/c-field-status";
+
 import "./c-input.scss";
 
 type CInputProps = {
@@ -10,6 +15,7 @@ type CInputProps = {
   hint?: string;
   leading?: ReactNode;
   trailing?: ReactNode;
+  status?: FieldStatus;
   value: string;
   onChange: (value: string) => void;
   type?: InputHTMLAttributes<HTMLInputElement>["type"];
@@ -27,6 +33,7 @@ export function CInput({
   hint,
   leading,
   trailing,
+  status = "idle",
   value,
   onChange,
   type = "text",
@@ -42,6 +49,7 @@ export function CInput({
   };
 
   const classes = ["c-input", className ?? ""].filter(Boolean).join(" ");
+  const showStatus = status !== "idle";
 
   return (
     <label className={classes} htmlFor={id}>
@@ -60,7 +68,11 @@ export function CInput({
           inputMode={inputMode}
           disabled={disabled}
         />
-        {trailing ? (
+        {showStatus ? (
+          <span className="c-input__trailing">
+            <CFieldStatus status={status} />
+          </span>
+        ) : trailing ? (
           <span className="c-input__trailing">{trailing}</span>
         ) : null}
       </span>

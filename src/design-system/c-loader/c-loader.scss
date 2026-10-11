@@ -42,30 +42,6 @@
   box-shadow: 0 4px 12px rgb(110 160 216 / 35%);
 }
 
-.c-loader__bar {
-  position: relative;
-  width: 100%;
-  height: 0.2rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--color-border);
-}
-
-.c-loader__bar-fill {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 42%;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgb(142 184 229 / 0%) 0%,
-    var(--color-primary-strong) 50%,
-    rgb(142 184 229 / 0%) 100%
-  );
-}
-
 .c-loader__label {
   margin: 0;
   font-family: var(--font-body);

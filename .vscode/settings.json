@@ -1,0 +1,9 @@
+{
+  "git.enabled": true,
+  "git.path": "/usr/bin/git",
+  "git.autoRepositoryDetection": true,
+  "git.repositoryScanMaxDepth": 2,
+  "git.untrackedChanges": "mixed",
+  "scm.defaultViewMode": "list",
+  "scm.alwaysShowRepositories": true
+}

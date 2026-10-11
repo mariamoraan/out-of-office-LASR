@@ -12,6 +12,7 @@ export {
   Heart,
   LineChart,
   Link2,
+  LoaderCircle,
   MessageCircle,
   Mountain,
   Paintbrush,

@@ -3,13 +3,17 @@
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 
-import { Check } from "@/core/icons";
+import {
+  CFieldStatus,
+  type FieldStatus,
+} from "@/design-system/c-field-status/c-field-status";
 
 import "./c-option-row.scss";
 
 type COptionRowProps = {
   label: string;
   selected?: boolean;
+  status?: FieldStatus;
   icon?: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
@@ -19,6 +23,7 @@ type COptionRowProps = {
 export function COptionRow({
   label,
   selected = false,
+  status = "idle",
   icon,
   onClick,
   disabled = false,
@@ -32,6 +37,9 @@ export function COptionRow({
     .filter(Boolean)
     .join(" ");
 
+  const trailingStatus: FieldStatus =
+    status === "saving" ? "saving" : selected ? "saved" : "idle";
+
   return (
     <motion.button
       type="button"
@@ -44,9 +52,7 @@ export function COptionRow({
     >
       {icon ? <span className="c-option-row__icon">{icon}</span> : null}
       <span className="c-option-row__label">{label}</span>
-      <span className="c-option-row__check" aria-hidden>
-        {selected ? <Check size={18} strokeWidth={2.25} /> : null}
-      </span>
+      <CFieldStatus status={trailingStatus} />
     </motion.button>
   );
 }
