@@ -156,6 +156,7 @@ export function SurveyFlow() {
   const pendingTextPatchRef = useRef<SurveyDraftPatch>({});
   const pendingTextKeysRef = useRef<string[]>([]);
   const draftRef = useRef<SurveyResponseDto | null>(null);
+  const persistGenerationRef = useRef(0);
   const stepFocusRef = useRef<HTMLInputElement | HTMLButtonElement | null>(
     null,
   );
@@ -282,6 +283,7 @@ export function SurveyFlow() {
   const applyServerDraft = useCallback((survey: SurveyResponseDto) => {
     const pending = pendingTextPatchRef.current;
     if (Object.keys(pending).length === 0) {
+      draftRef.current = survey;
       setDraft(survey);
       return;
     }
@@ -296,17 +298,21 @@ export function SurveyFlow() {
           : privacyConsentAcceptedAt.toISOString();
     }
 
+    draftRef.current = next;
     setDraft(next);
   }, []);
 
   const persistPatch = useCallback(
     async (key: string, kind: "selection" | "text", patch: SurveyDraftPatch) => {
+      const generation = ++persistGenerationRef.current;
       setSavingKey(key);
       setError(null);
 
       try {
         const survey = await patchSurveyDraft(patch);
-        applyServerDraft(survey);
+        if (generation === persistGenerationRef.current) {
+          applyServerDraft(survey);
+        }
 
         if (kind === "text") {
           markTextSaved(key);
@@ -362,23 +368,23 @@ export function SurveyFlow() {
   );
 
   const updateLocal = useCallback((patch: SurveyDraftPatch) => {
-    setDraft((current) => {
-      if (!current) {
-        return current;
-      }
+    const current = draftRef.current;
+    if (!current) {
+      return;
+    }
 
-      const { privacyConsentAcceptedAt, ...rest } = patch;
-      const next: SurveyResponseDto = { ...current, ...rest };
+    const { privacyConsentAcceptedAt, ...rest } = patch;
+    const next: SurveyResponseDto = { ...current, ...rest };
 
-      if (privacyConsentAcceptedAt !== undefined) {
-        next.privacyConsentAcceptedAt =
-          privacyConsentAcceptedAt == null
-            ? null
-            : privacyConsentAcceptedAt.toISOString();
-      }
+    if (privacyConsentAcceptedAt !== undefined) {
+      next.privacyConsentAcceptedAt =
+        privacyConsentAcceptedAt == null
+          ? null
+          : privacyConsentAcceptedAt.toISOString();
+    }
 
-      return next;
-    });
+    draftRef.current = next;
+    setDraft(next);
   }, []);
 
   const saveImmediate = useCallback(
@@ -754,8 +760,13 @@ export function SurveyFlow() {
                   status={fieldStatus(`work:${workArea}`, "selection")}
                   enterSubmitsFormId={SURVEY_STEP_FORM_ID}
                   onClick={() => {
+                    const current = draftRef.current;
+                    if (!current) {
+                      return;
+                    }
+
                     const workAreas = toggleValue(
-                      draft.workAreas,
+                      current.workAreas,
                       workArea,
                     ) as WorkArea[];
                     void saveImmediate(`work:${workArea}`, { workAreas });
@@ -796,7 +807,12 @@ export function SurveyFlow() {
                   status={fieldStatus(`leisure:${tag}`, "selection")}
                   enterSubmitsFormId={SURVEY_STEP_FORM_ID}
                   onClick={() => {
-                    const leisureTags = toggleValue(draft.leisureTags, tag);
+                    const current = draftRef.current;
+                    if (!current) {
+                      return;
+                    }
+
+                    const leisureTags = toggleValue(current.leisureTags, tag);
                     void saveImmediate(`leisure:${tag}`, { leisureTags });
                   }}
                 />
@@ -812,7 +828,12 @@ export function SurveyFlow() {
                     status={fieldStatus(`leisureOther:${item}`, "selection")}
                     enterSubmitsFormId={SURVEY_STEP_FORM_ID}
                     onClick={() => {
-                      const leisureOther = draft.leisureOther.filter(
+                      const current = draftRef.current;
+                      if (!current) {
+                        return;
+                      }
+
+                      const leisureOther = current.leisureOther.filter(
                         (value) => value !== item,
                       );
                       void saveImmediate(`leisureOther:${item}`, {
@@ -837,7 +858,12 @@ export function SurveyFlow() {
                   return;
                 }
 
-                const alreadyAdded = draft.leisureOther.some(
+                const current = draftRef.current;
+                if (!current) {
+                  return;
+                }
+
+                const alreadyAdded = current.leisureOther.some(
                   (value) => value.toLowerCase() === trimmed.toLowerCase(),
                 );
                 setLeisureOtherDraft("");
@@ -846,7 +872,7 @@ export function SurveyFlow() {
                 }
 
                 void saveImmediate("leisureOther", {
-                  leisureOther: [...draft.leisureOther, trimmed],
+                  leisureOther: [...current.leisureOther, trimmed],
                 });
               }}
             />
@@ -893,8 +919,13 @@ export function SurveyFlow() {
                 status={fieldStatus(`meeting:${slot}`, "selection")}
                 enterSubmitsFormId={SURVEY_STEP_FORM_ID}
                 onClick={() => {
+                  const current = draftRef.current;
+                  if (!current) {
+                    return;
+                  }
+
                   const meetingSlots = toggleValue(
-                    draft.meetingSlots,
+                    current.meetingSlots,
                     slot,
                   ) as MeetingSlot[];
                   void saveImmediate(`meeting:${slot}`, { meetingSlots });
