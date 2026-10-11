@@ -410,7 +410,7 @@ export function DashboardResponses() {
                               </span>
                             </td>
                             <td>{response.fullName ?? list.emptyCell}</td>
-                            <td>
+                            <td className="f-dashboard-responses__age">
                               {response.ageGroup
                                 ? labels.ageGroups[response.ageGroup]
                                 : list.emptyCell}
