@@ -46,7 +46,10 @@ Each task should be reviewable on its own (ideally a small, focused diff).
 
 - Run **one task** after explicit approval ("ok", "next", "do task X").
 - Exception: if the human approves a block ("phase 0", "do tasks 1–3"), run only that block and stop.
-- When a task finishes: summarize what changed, which files were touched, and ask before the next task.
+- When a task finishes:
+  1. Summarize what changed and which files were touched.
+  2. Suggest a **Conventional Commits** message for that task’s diff (e.g. `feat(survey): …`, `fix(dashboard): …`, `refactor(…): …`). One subject line; optional short body only if needed. Do **not** create the commit unless the human asks.
+  3. Ask before the next task.
 - Do not start the next task without OK.
 
 ## Anti-patterns
