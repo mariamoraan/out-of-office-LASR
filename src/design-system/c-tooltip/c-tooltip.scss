@@ -1,0 +1,25 @@
+.c-tooltip {
+  display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
+  vertical-align: bottom;
+}
+
+.c-tooltip__bubble {
+  position: fixed;
+  z-index: 50;
+  max-width: min(20rem, calc(100vw - 1rem));
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-text);
+  color: var(--color-on-ink);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-soft);
+  pointer-events: none;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
