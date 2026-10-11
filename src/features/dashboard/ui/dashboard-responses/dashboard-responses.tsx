@@ -30,6 +30,7 @@ import {
   type FilterState,
 } from "@/features/dashboard/ui/dashboard-responses/dashboard-filter-state";
 import { DashboardFiltersForm } from "@/features/dashboard/ui/dashboard-responses/dashboard-filters-form";
+import { DashboardTruncatedCell } from "@/features/dashboard/ui/dashboard-responses/dashboard-truncated-cell";
 import { useDashboardSplitWidth } from "@/features/dashboard/ui/dashboard-responses/use-dashboard-split-width";
 import { CButton, CLoader } from "@/design-system";
 
@@ -409,33 +410,61 @@ export function DashboardResponses() {
                                 {list.status[response.status]}
                               </span>
                             </td>
-                            <td>{response.fullName ?? list.emptyCell}</td>
-                            <td className="f-dashboard-responses__age">
-                              {response.ageGroup
-                                ? labels.ageGroups[response.ageGroup]
-                                : list.emptyCell}
-                            </td>
-                            <td>{formatContact(response, list.emptyCell)}</td>
                             <td>
-                              {response.workAreas.length > 0
-                                ? response.workAreas
-                                    .map((area) => labels.workAreas[area])
-                                    .join(" · ")
-                                : list.emptyCell}
+                              <DashboardTruncatedCell
+                                value={response.fullName ?? list.emptyCell}
+                              />
                             </td>
                             <td>
-                              {response.meetingSlots.length > 0
-                                ? response.meetingSlots
-                                    .map((slot) => labels.meetingSlots[slot])
-                                    .join(" · ")
-                                : list.emptyCell}
+                              <DashboardTruncatedCell
+                                value={
+                                  response.ageGroup
+                                    ? labels.ageGroups[response.ageGroup]
+                                    : list.emptyCell
+                                }
+                              />
                             </td>
                             <td>
-                              {response.gender
-                                ? labels.genders[response.gender]
-                                : list.emptyCell}
+                              <DashboardTruncatedCell
+                                value={formatContact(response, list.emptyCell)}
+                              />
                             </td>
-                            <td>{formatDate(response, list.emptyCell)}</td>
+                            <td>
+                              <DashboardTruncatedCell
+                                value={
+                                  response.workAreas.length > 0
+                                    ? response.workAreas
+                                        .map((area) => labels.workAreas[area])
+                                        .join(" · ")
+                                    : list.emptyCell
+                                }
+                              />
+                            </td>
+                            <td>
+                              <DashboardTruncatedCell
+                                value={
+                                  response.meetingSlots.length > 0
+                                    ? response.meetingSlots
+                                        .map((slot) => labels.meetingSlots[slot])
+                                        .join(" · ")
+                                    : list.emptyCell
+                                }
+                              />
+                            </td>
+                            <td>
+                              <DashboardTruncatedCell
+                                value={
+                                  response.gender
+                                    ? labels.genders[response.gender]
+                                    : list.emptyCell
+                                }
+                              />
+                            </td>
+                            <td>
+                              <DashboardTruncatedCell
+                                value={formatDate(response, list.emptyCell)}
+                              />
+                            </td>
                           </tr>
                         );
                       })}
