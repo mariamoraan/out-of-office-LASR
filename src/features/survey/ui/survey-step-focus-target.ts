@@ -14,12 +14,14 @@ export type SurveyStepFocusDraft = {
   leisureOther: string | null;
   gender: string | null;
   meetingSlots: string[];
+  privacyConsentAcceptedAt: string | null;
 };
 
 export type SurveyStepFocusTarget =
   | "fullName"
   | "email"
   | "whatsapp"
+  | "privacyConsent"
   | "linkedin"
   | "instagram"
   | "xHandle"
@@ -51,11 +53,11 @@ export function getSurveyStepFocusTarget(
       return draft.ageGroup ? null : "ageGroupFirst";
 
     case "contact":
-      if (!hasText(draft.email)) {
+      if (!hasText(draft.email) && !hasText(draft.whatsapp)) {
         return "email";
       }
-      if (!hasText(draft.whatsapp)) {
-        return "whatsapp";
+      if (!draft.privacyConsentAcceptedAt) {
+        return "privacyConsent";
       }
       return null;
 

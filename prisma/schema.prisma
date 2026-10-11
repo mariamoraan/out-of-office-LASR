@@ -65,6 +65,8 @@ model SurveyResponse {
   gender       Gender?
   meetingSlots MeetingSlot[] @map("meeting_slots")
 
+  privacyConsentAcceptedAt DateTime? @map("privacy_consent_accepted_at")
+
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
   submittedAt DateTime? @map("submitted_at")

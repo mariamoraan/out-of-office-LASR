@@ -17,6 +17,7 @@ export type AdminSurveyResponseDto = {
   leisureOther: string | null;
   gender: SurveyResponse["gender"];
   meetingSlots: SurveyResponse["meetingSlots"];
+  privacyConsentAcceptedAt: string | null;
   createdAt: string;
   updatedAt: string;
   submittedAt: string | null;
@@ -41,6 +42,9 @@ export function toAdminSurveyResponseDto(
     leisureOther: survey.leisureOther,
     gender: survey.gender,
     meetingSlots: survey.meetingSlots,
+    privacyConsentAcceptedAt: survey.privacyConsentAcceptedAt
+      ? survey.privacyConsentAcceptedAt.toISOString()
+      : null,
     createdAt: survey.createdAt.toISOString(),
     updatedAt: survey.updatedAt.toISOString(),
     submittedAt: survey.submittedAt ? survey.submittedAt.toISOString() : null,

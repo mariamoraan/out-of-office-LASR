@@ -9,5 +9,6 @@ export { CLoader } from "@/design-system/c-loader/c-loader";
 export { COptionRow } from "@/design-system/c-option-row/c-option-row";
 export { CProgress } from "@/design-system/c-progress/c-progress";
 export { CStepShell } from "@/design-system/c-step-shell/c-step-shell";
+export { CTooltip } from "@/design-system/c-tooltip/c-tooltip";
 
 

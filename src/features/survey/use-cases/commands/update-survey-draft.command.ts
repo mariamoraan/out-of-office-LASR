@@ -74,6 +74,11 @@ export async function updateSurveyDraft(
     normalizedPatch.leisureOther =
       normalizeOptionalText(patch.leisureOther) ?? null;
   }
+  if (patch.privacyConsentAcceptedAt !== undefined) {
+    // Always stamp acceptance with server time; null clears consent.
+    normalizedPatch.privacyConsentAcceptedAt =
+      patch.privacyConsentAcceptedAt == null ? null : new Date();
+  }
 
   return surveyResponseRepository.updateDraft(sessionToken, normalizedPatch);
 }

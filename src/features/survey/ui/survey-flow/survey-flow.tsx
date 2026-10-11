@@ -61,6 +61,7 @@ import {
   toSurveyLocalDraftFields,
   writeSurveyLocalDraft,
 } from "@/features/survey/ui/survey-local-draft";
+import { SurveyPrivacyConsent } from "@/features/survey/ui/survey-privacy-consent/survey-privacy-consent";
 import {
   getSurveyStepFocusTarget,
   type SurveyStepFocusTarget,
@@ -72,10 +73,19 @@ const TEXT_SAVED_VISIBLE_MS = 3000;
 const SURVEY_STEP_FORM_ID = "survey-step-form";
 const SURVEY_STEP_TITLE_ID = "survey-step-title";
 const CONTACT_ERROR_ID = "survey-contact-error";
+const CONSENT_ERROR_ID = "survey-consent-error";
 const FORM_ERROR_ID = "survey-form-error";
 
 function hasText(value: string | null | undefined) {
   return Boolean(value?.trim());
+}
+
+function hasContactMethod(draft: SurveyResponseDto) {
+  return hasText(draft.email) || hasText(draft.whatsapp);
+}
+
+function hasPrivacyConsent(draft: SurveyResponseDto) {
+  return Boolean(draft.privacyConsentAcceptedAt);
 }
 
 function canContinue(step: SurveyStepId, draft: SurveyResponseDto) {
@@ -85,7 +95,7 @@ function canContinue(step: SurveyStepId, draft: SurveyResponseDto) {
     case "ageGroup":
       return Boolean(draft.ageGroup);
     case "contact":
-      return hasText(draft.email) || hasText(draft.whatsapp);
+      return hasContactMethod(draft) && hasPrivacyConsent(draft);
     case "social":
       return true;
     case "work":
@@ -128,6 +138,7 @@ export function SurveyFlow() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [contactError, setContactError] = useState<string | null>(null);
+  const [consentError, setConsentError] = useState<string | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [textSavedKey, setTextSavedKey] = useState<string | null>(null);
   const textSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -290,7 +301,23 @@ export function SurveyFlow() {
   );
 
   const updateLocal = useCallback((patch: SurveyDraftPatch) => {
-    setDraft((current) => (current ? { ...current, ...patch } : current));
+    setDraft((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const { privacyConsentAcceptedAt, ...rest } = patch;
+      const next: SurveyResponseDto = { ...current, ...rest };
+
+      if (privacyConsentAcceptedAt !== undefined) {
+        next.privacyConsentAcceptedAt =
+          privacyConsentAcceptedAt == null
+            ? null
+            : privacyConsentAcceptedAt.toISOString();
+      }
+
+      return next;
+    });
   }, []);
 
   const saveImmediate = useCallback(
@@ -333,6 +360,7 @@ export function SurveyFlow() {
     }
 
     setContactError(null);
+    setConsentError(null);
     setStepIndex((index) => index - 1);
   };
 
@@ -341,12 +369,18 @@ export function SurveyFlow() {
       return;
     }
 
-    if (stepId === "contact" && !canContinue("contact", draft)) {
-      setContactError(t.survey.steps.contact.error);
-      return;
+    if (stepId === "contact") {
+      const contactOk = hasContactMethod(draft);
+      const consentOk = hasPrivacyConsent(draft);
+      setContactError(contactOk ? null : t.survey.steps.contact.error);
+      setConsentError(consentOk ? null : t.survey.steps.contact.consentError);
+      if (!contactOk || !consentOk) {
+        return;
+      }
     }
 
     setContactError(null);
+    setConsentError(null);
 
     if (stepId === "meeting") {
       setIsSubmitting(true);
@@ -367,6 +401,9 @@ export function SurveyFlow() {
           ageGroup: draft.ageGroup,
           gender: draft.gender,
           meetingSlots: draft.meetingSlots,
+          privacyConsentAcceptedAt: draft.privacyConsentAcceptedAt
+            ? new Date(draft.privacyConsentAcceptedAt)
+            : null,
         });
         await submitSurveyDraft();
         clearSurveyLocalDraft();
@@ -424,6 +461,8 @@ export function SurveyFlow() {
   }
 
   const contactInvalid = Boolean(contactError);
+  const consentInvalid = Boolean(consentError);
+  const consentSelected = hasPrivacyConsent(draft);
 
   return (
     <CStepShell
@@ -547,6 +586,40 @@ export function SurveyFlow() {
                 role="alert"
               >
                 {contactError}
+              </p>
+            ) : null}
+            <SurveyPrivacyConsent
+              ref={focusRefFor("privacyConsent")}
+              selected={consentSelected}
+              status={fieldStatus("privacyConsent", "selection")}
+              invalid={consentInvalid}
+              describedBy={consentInvalid ? CONSENT_ERROR_ID : undefined}
+              enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+              onToggle={() => {
+                setConsentError(null);
+                const accepting = !consentSelected;
+                setDraft((current) =>
+                  current
+                    ? {
+                        ...current,
+                        privacyConsentAcceptedAt: accepting
+                          ? new Date().toISOString()
+                          : null,
+                      }
+                    : current,
+                );
+                void persistPatch("privacyConsent", "selection", {
+                  privacyConsentAcceptedAt: accepting ? new Date() : null,
+                });
+              }}
+            />
+            {consentError ? (
+              <p
+                id={CONSENT_ERROR_ID}
+                className="f-survey-flow__error"
+                role="alert"
+              >
+                {consentError}
               </p>
             ) : null}
           </div>

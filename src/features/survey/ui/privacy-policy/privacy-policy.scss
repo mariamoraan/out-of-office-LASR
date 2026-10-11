@@ -1,0 +1,155 @@
+.f-privacy {
+  min-height: 100dvh;
+  padding-top: calc(var(--space-5) + env(safe-area-inset-top, 0px));
+  padding-right: calc(var(--space-5) + env(safe-area-inset-right, 0px));
+  padding-bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(var(--space-5) + env(safe-area-inset-left, 0px));
+}
+
+.f-privacy__frame {
+  width: min(100%, 38rem);
+  margin: 0 auto;
+}
+
+.f-privacy__header {
+  margin-bottom: var(--space-6);
+}
+
+.f-privacy__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-5);
+  padding: 0.35rem 0.55rem 0.35rem 0.35rem;
+  margin-left: -0.35rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color 160ms ease;
+
+  &:hover {
+    background: rgb(43 33 28 / 5%);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.f-privacy__brand {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4.5vw, 2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.f-privacy__title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 3.8vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.f-privacy__meta {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+}
+
+.f-privacy__lead {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid rgb(43 33 28 / 10%);
+}
+
+.f-privacy__intro,
+.f-privacy__disclaimer,
+.f-privacy__paragraph {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.f-privacy__intro {
+  font-size: 1.08rem;
+}
+
+.f-privacy__disclaimer {
+  margin-bottom: 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid rgb(201 97 66 / 55%);
+  background: rgb(255 249 244 / 55%);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.f-privacy__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.f-privacy__section {
+  scroll-margin-top: var(--space-5);
+}
+
+.f-privacy__section-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: 1.28rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--color-text);
+}
+
+.f-privacy__list {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--color-text);
+
+  li {
+    position: relative;
+    padding-left: 1.15rem;
+  }
+
+  li + li {
+    margin-top: var(--space-2);
+  }
+
+  li::before {
+    content: "";
+    position: absolute;
+    top: 0.7em;
+    left: 0;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+  }
+}
+
+.f-privacy__section .f-privacy__paragraph:last-child,
+.f-privacy__section .f-privacy__list:last-child {
+  margin-bottom: 0;
+}

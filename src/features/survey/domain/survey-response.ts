@@ -23,6 +23,7 @@ export type SurveyResponse = {
   leisureOther: string | null;
   gender: Gender | null;
   meetingSlots: MeetingSlot[];
+  privacyConsentAcceptedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
   submittedAt: Date | null;
@@ -42,4 +43,5 @@ export type SurveyDraftPatch = Partial<{
   leisureOther: string | null;
   gender: Gender | null;
   meetingSlots: MeetingSlot[];
+  privacyConsentAcceptedAt: Date | null;
 }>;

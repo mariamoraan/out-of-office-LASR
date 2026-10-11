@@ -149,6 +149,13 @@ export function DashboardResponseDetailPanel({
                 value={response.whatsapp ?? list.emptyCell}
               />
               <DetailRow
+                label={detail.fields.privacyConsentAcceptedAt}
+                value={formatDateValue(
+                  response.privacyConsentAcceptedAt,
+                  list.emptyCell,
+                )}
+              />
+              <DetailRow
                 label={detail.fields.linkedin}
                 value={response.linkedin ?? list.emptyCell}
               />

@@ -2,11 +2,12 @@ import type { SurveyResponse } from "@/features/survey/domain/survey-response";
 
 export type SurveyResponseDto = Omit<
   SurveyResponse,
-  "createdAt" | "updatedAt" | "submittedAt"
+  "createdAt" | "updatedAt" | "submittedAt" | "privacyConsentAcceptedAt"
 > & {
   createdAt: string;
   updatedAt: string;
   submittedAt: string | null;
+  privacyConsentAcceptedAt: string | null;
 };
 
 export function toSurveyResponseDto(
@@ -17,5 +18,8 @@ export function toSurveyResponseDto(
     createdAt: survey.createdAt.toISOString(),
     updatedAt: survey.updatedAt.toISOString(),
     submittedAt: survey.submittedAt ? survey.submittedAt.toISOString() : null,
+    privacyConsentAcceptedAt: survey.privacyConsentAcceptedAt
+      ? survey.privacyConsentAcceptedAt.toISOString()
+      : null,
   };
 }

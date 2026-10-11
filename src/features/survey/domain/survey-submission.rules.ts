@@ -17,6 +17,17 @@ export function assertHasContact(
   }
 }
 
+export function assertPrivacyConsentAccepted(
+  privacyConsentAcceptedAt: Date | null | undefined,
+): void {
+  if (!privacyConsentAcceptedAt) {
+    throw new SurveyDomainError(
+      "SURVEY_PRIVACY_CONSENT_REQUIRED",
+      "Privacy and contact consent is required to submit.",
+    );
+  }
+}
+
 export function assertCanSubmit(survey: SurveyResponse): void {
   if (survey.status === "submitted") {
     throw new SurveyDomainError(
@@ -40,6 +51,7 @@ export function assertCanSubmit(survey: SurveyResponse): void {
   }
 
   assertHasContact(survey.email, survey.whatsapp);
+  assertPrivacyConsentAccepted(survey.privacyConsentAcceptedAt);
 
   if (survey.workAreas.length === 0) {
     throw new SurveyDomainError(

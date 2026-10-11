@@ -20,6 +20,7 @@ export type SurveyLocalDraftFields = {
   leisureOther: string | null;
   gender: Gender | null;
   meetingSlots: MeetingSlot[];
+  privacyConsentAcceptedAt: string | null;
 };
 
 export type SurveyLocalDraft = {
@@ -45,6 +46,7 @@ export function toSurveyLocalDraftFields(
     leisureOther: source.leisureOther,
     gender: source.gender,
     meetingSlots: source.meetingSlots,
+    privacyConsentAcceptedAt: source.privacyConsentAcceptedAt,
   };
 }
 
@@ -79,6 +81,7 @@ function parseFields(value: unknown): SurveyLocalDraftFields | null {
     leisureOther,
     gender,
     meetingSlots,
+    privacyConsentAcceptedAt,
   } = value;
 
   if (
@@ -99,6 +102,14 @@ function parseFields(value: unknown): SurveyLocalDraftFields | null {
     return null;
   }
 
+  // Optional for drafts saved before consent existed.
+  if (
+    privacyConsentAcceptedAt !== undefined &&
+    !isStringOrNull(privacyConsentAcceptedAt)
+  ) {
+    return null;
+  }
+
   return {
     fullName,
     ageGroup: ageGroup as AgeGroup | null,
@@ -113,6 +124,9 @@ function parseFields(value: unknown): SurveyLocalDraftFields | null {
     leisureOther,
     gender: gender as Gender | null,
     meetingSlots: meetingSlots as MeetingSlot[],
+    privacyConsentAcceptedAt: isStringOrNull(privacyConsentAcceptedAt)
+      ? privacyConsentAcceptedAt
+      : null,
   };
 }
 

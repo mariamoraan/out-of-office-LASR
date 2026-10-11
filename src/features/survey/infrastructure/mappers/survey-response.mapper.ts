@@ -38,6 +38,7 @@ export function toDomainSurveyResponse(
     leisureOther: row.leisureOther,
     gender: row.gender as Gender | null,
     meetingSlots: row.meetingSlots as MeetingSlot[],
+    privacyConsentAcceptedAt: row.privacyConsentAcceptedAt,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
     submittedAt: row.submittedAt,
@@ -58,6 +59,7 @@ export function toPrismaDraftPatch(patch: SurveyDraftPatch): {
   leisureOther?: string | null;
   gender?: PrismaGender | null;
   meetingSlots?: PrismaMeetingSlot[];
+  privacyConsentAcceptedAt?: Date | null;
 } {
   return {
     ...(patch.fullName !== undefined ? { fullName: patch.fullName } : {}),
@@ -86,6 +88,9 @@ export function toPrismaDraftPatch(patch: SurveyDraftPatch): {
       : {}),
     ...(patch.meetingSlots !== undefined
       ? { meetingSlots: patch.meetingSlots as PrismaMeetingSlot[] }
+      : {}),
+    ...(patch.privacyConsentAcceptedAt !== undefined
+      ? { privacyConsentAcceptedAt: patch.privacyConsentAcceptedAt }
       : {}),
   };
 }

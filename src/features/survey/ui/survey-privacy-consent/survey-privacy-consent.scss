@@ -1,0 +1,124 @@
+.f-survey-consent {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: start;
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgb(255 249 244 / 72%);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.f-survey-consent--selected {
+  border-color: var(--color-primary-strong);
+  background: rgb(201 97 66 / 14%);
+}
+
+.f-survey-consent--invalid {
+  border-color: #b42318;
+  box-shadow: 0 0 0 1px rgb(180 35 24 / 18%);
+}
+
+.f-survey-consent__box-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  margin-top: 0.1rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible .f-survey-consent__box {
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.f-survey-consent__box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.35rem;
+  background: var(--color-surface);
+  color: transparent;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.f-survey-consent--selected .f-survey-consent__box {
+  border-color: var(--color-primary-strong);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  transform: scale(1.02);
+}
+
+.f-survey-consent__check {
+  opacity: 0;
+  transform: scale(0.7);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.f-survey-consent--selected .f-survey-consent__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.f-survey-consent__copy {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.f-survey-consent__link {
+  color: var(--color-primary-strong);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    border-radius: 2px;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.f-survey-consent__status.c-field-status {
+  margin-top: 0.1rem;
+  color: var(--color-primary-strong);
+
+  .c-field-status__spinner,
+  .c-field-status__check {
+    color: inherit;
+  }
+}
