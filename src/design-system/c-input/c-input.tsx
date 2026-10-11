@@ -3,6 +3,7 @@
 import type {
   ChangeEvent,
   InputHTMLAttributes,
+  KeyboardEvent,
   ReactNode,
   Ref,
 } from "react";
@@ -23,10 +24,13 @@ type CInputProps = {
   status?: FieldStatus;
   value: string;
   onChange: (value: string) => void;
+  /** When set, Enter calls this and does not submit the parent form. */
+  onEnter?: () => void;
   type?: InputHTMLAttributes<HTMLInputElement>["type"];
   placeholder?: string;
   autoComplete?: string;
   inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
+  enterKeyHint?: InputHTMLAttributes<HTMLInputElement>["enterKeyHint"];
   name?: string;
   disabled?: boolean;
   className?: string;
@@ -45,10 +49,12 @@ export function CInput({
   status = "idle",
   value,
   onChange,
+  onEnter,
   type = "text",
   placeholder,
   autoComplete,
   inputMode,
+  enterKeyHint,
   name,
   disabled = false,
   className,
@@ -59,6 +65,15 @@ export function CInput({
 }: CInputProps) {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter" || !onEnter) {
+      return;
+    }
+
+    event.preventDefault();
+    onEnter();
   };
 
   const classes = ["c-input", className ?? ""].filter(Boolean).join(" ");
@@ -84,9 +99,11 @@ export function CInput({
           name={name}
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete={autoComplete}
           inputMode={inputMode}
+          enterKeyHint={enterKeyHint}
           disabled={disabled}
           aria-labelledby={ariaLabelledBy}
           aria-describedby={describedBy}
