@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
-import type { KeyboardEvent, ReactNode, Ref } from "react";
+import { motion, useReducedMotion, type Variants } from "motion/react";
+import { useMemo, type KeyboardEvent, type ReactNode, type Ref } from "react";
 
 import {
   CFieldStatus,
@@ -46,6 +46,33 @@ export function CChip({
   ]
     .filter(Boolean)
     .join(" ");
+  const reduced = useReducedMotion() ?? false;
+
+  const enterVariants = useMemo<Variants>(
+    () => ({
+      initial: {
+        opacity: 0,
+        y: reduced ? 0 : 12,
+        scale: reduced ? 1 : 0.92,
+      },
+      animate: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+          type: "spring",
+          stiffness: reduced ? 420 : 460,
+          damping: reduced ? 36 : 24,
+        },
+      },
+      exit: {
+        opacity: 0,
+        scale: reduced ? 1 : 0.9,
+        transition: { duration: 0.16 },
+      },
+    }),
+    [reduced],
+  );
 
   const trailingStatus: FieldStatus =
     status === "saving" ? "saving" : selected ? "saved" : "idle";
@@ -63,32 +90,41 @@ export function CChip({
   };
 
   return (
-    <motion.button
-      ref={ref}
-      type="button"
-      className={classes}
-      onClick={onClick}
-      onKeyDown={handleKeyDown}
-      disabled={disabled}
-      tabIndex={tabIndex}
-      role={selection}
-      aria-checked={selection ? selected : undefined}
-      aria-pressed={selection ? undefined : selected}
-      whileTap={disabled ? undefined : { scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 520, damping: 30 }}
+    <motion.span
+      className="c-chip__motion"
+      variants={enterVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      layout={!reduced}
     >
-      {icon ? (
-        <span className="c-chip__icon" aria-hidden>
-          {icon}
-        </span>
-      ) : null}
-      <span className="c-chip__label">{label}</span>
-      {trailingStatus !== "idle" ? (
-        <CFieldStatus
-          className="c-chip__status"
-          status={trailingStatus}
-        />
-      ) : null}
-    </motion.button>
+      <motion.button
+        ref={ref}
+        type="button"
+        className={classes}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+        tabIndex={tabIndex}
+        role={selection}
+        aria-checked={selection ? selected : undefined}
+        aria-pressed={selection ? undefined : selected}
+        whileTap={disabled || reduced ? undefined : { scale: 0.94 }}
+        transition={{ type: "spring", stiffness: 520, damping: 30 }}
+      >
+        {icon ? (
+          <span className="c-chip__icon" aria-hidden>
+            {icon}
+          </span>
+        ) : null}
+        <span className="c-chip__label">{label}</span>
+        {trailingStatus !== "idle" ? (
+          <CFieldStatus
+            className="c-chip__status"
+            status={trailingStatus}
+          />
+        ) : null}
+      </motion.button>
+    </motion.span>
   );
 }

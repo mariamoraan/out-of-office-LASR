@@ -1,0 +1,28 @@
+.f-survey-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.f-survey-confetti__piece {
+  position: absolute;
+  top: -0.5rem;
+  border-radius: 1px;
+  will-change: transform, opacity;
+}
+
+.f-survey-confetti__piece--square {
+  border-radius: 2px;
+}
+
+.f-survey-confetti__piece--rect {
+  border-radius: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .f-survey-confetti {
+    display: none;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
-import type { KeyboardEvent, ReactNode } from "react";
+import { motion, useReducedMotion, type Variants } from "motion/react";
+import { useMemo, type KeyboardEvent, type ReactNode } from "react";
 
 import "./c-choice-group.scss";
 
@@ -57,6 +58,20 @@ export function CChoiceGroup({
   className,
 }: CChoiceGroupProps) {
   const classes = ["c-choice-group", className ?? ""].filter(Boolean).join(" ");
+  const reduced = useReducedMotion() ?? false;
+
+  const groupVariants = useMemo<Variants>(
+    () => ({
+      initial: {},
+      animate: {
+        transition: {
+          staggerChildren: reduced ? 0 : 0.045,
+          delayChildren: reduced ? 0 : 0.04,
+        },
+      },
+    }),
+    [reduced],
+  );
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (mode !== "single") {
@@ -79,13 +94,16 @@ export function CChoiceGroup({
   };
 
   return (
-    <div
+    <motion.div
       className={classes}
       role={mode === "single" ? "radiogroup" : "group"}
       aria-labelledby={labelledBy}
       onKeyDown={handleKeyDown}
+      variants={groupVariants}
+      initial="initial"
+      animate="animate"
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

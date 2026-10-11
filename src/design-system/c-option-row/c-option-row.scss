@@ -1,3 +1,7 @@
+.c-option-row__motion {
+  width: 100%;
+}
+
 .c-option-row {
   display: flex;
   align-items: center;
@@ -34,6 +38,27 @@
   border-color: var(--color-primary-strong);
   background: rgb(201 97 66 / 28%);
   color: var(--color-text);
+  animation: c-option-row-pop 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes c-option-row-pop {
+  0% {
+    box-shadow: 0 0 0 0 rgb(201 97 66 / 0%);
+  }
+
+  40% {
+    box-shadow: 0 0 0 4px rgb(201 97 66 / 24%);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(201 97 66 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-option-row--selected {
+    animation: none;
+  }
 }
 
 .c-option-row__icon {

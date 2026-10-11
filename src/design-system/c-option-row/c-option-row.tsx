@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
-import type { KeyboardEvent, ReactNode, Ref } from "react";
+import { motion, useReducedMotion, type Variants } from "motion/react";
+import { useMemo, type KeyboardEvent, type ReactNode, type Ref } from "react";
 
 import {
   CFieldStatus,
@@ -46,6 +46,28 @@ export function COptionRow({
   ]
     .filter(Boolean)
     .join(" ");
+  const reduced = useReducedMotion() ?? false;
+
+  const enterVariants = useMemo<Variants>(
+    () => ({
+      initial: {
+        opacity: 0,
+        y: reduced ? 0 : 14,
+        x: reduced ? 0 : 8,
+      },
+      animate: {
+        opacity: 1,
+        y: 0,
+        x: 0,
+        transition: {
+          type: "spring",
+          stiffness: reduced ? 400 : 420,
+          damping: reduced ? 34 : 26,
+        },
+      },
+    }),
+    [reduced],
+  );
 
   const trailingStatus: FieldStatus =
     status === "saving" ? "saving" : selected ? "saved" : "idle";
@@ -63,30 +85,32 @@ export function COptionRow({
   };
 
   return (
-    <motion.button
-      ref={ref}
-      type="button"
-      className={classes}
-      onClick={onClick}
-      onKeyDown={handleKeyDown}
-      disabled={disabled}
-      tabIndex={tabIndex}
-      role={selection}
-      aria-checked={selection ? selected : undefined}
-      aria-pressed={selection ? undefined : selected}
-      whileTap={disabled ? undefined : { scale: 0.99 }}
-      transition={{ type: "spring", stiffness: 520, damping: 32 }}
-    >
-      {icon ? (
-        <span className="c-option-row__icon" aria-hidden>
-          {icon}
-        </span>
-      ) : null}
-      <span className="c-option-row__label">{label}</span>
-      <CFieldStatus
-        className="c-option-row__status"
-        status={trailingStatus}
-      />
-    </motion.button>
+    <motion.div className="c-option-row__motion" variants={enterVariants}>
+      <motion.button
+        ref={ref}
+        type="button"
+        className={classes}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+        tabIndex={tabIndex}
+        role={selection}
+        aria-checked={selection ? selected : undefined}
+        aria-pressed={selection ? undefined : selected}
+        whileTap={disabled || reduced ? undefined : { scale: 0.985 }}
+        transition={{ type: "spring", stiffness: 520, damping: 32 }}
+      >
+        {icon ? (
+          <span className="c-option-row__icon" aria-hidden>
+            {icon}
+          </span>
+        ) : null}
+        <span className="c-option-row__label">{label}</span>
+        <CFieldStatus
+          className="c-option-row__status"
+          status={trailingStatus}
+        />
+      </motion.button>
+    </motion.div>
   );
 }

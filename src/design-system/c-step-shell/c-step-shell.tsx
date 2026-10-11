@@ -1,7 +1,12 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, type ReactNode } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
+import { useEffect, useMemo, useRef, type ReactNode } from "react";
 
 import { ChevronLeft } from "@/core/icons";
 import { CProgress } from "@/design-system/c-progress/c-progress";
@@ -45,7 +50,62 @@ export function CStepShell({
   const classes = ["c-step-shell", className ?? ""].filter(Boolean).join(" ");
   const titleRef = useRef<HTMLHeadingElement>(null);
   const onStepEnterRef = useRef(onStepEnter);
-  onStepEnterRef.current = onStepEnter;
+  const reduced = useReducedMotion() ?? false;
+
+  useEffect(() => {
+    onStepEnterRef.current = onStepEnter;
+  }, [onStepEnter]);
+
+  const contentVariants = useMemo<Variants>(
+    () => ({
+      initial: {
+        opacity: 0,
+        x: reduced ? 0 : 36,
+        y: reduced ? 0 : 10,
+      },
+      animate: {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        transition: {
+          duration: reduced ? 0.16 : 0.36,
+          ease: [0.22, 1, 0.36, 1],
+          when: "beforeChildren",
+          staggerChildren: reduced ? 0 : 0.08,
+        },
+      },
+      exit: {
+        opacity: 0,
+        x: reduced ? 0 : -22,
+        y: reduced ? 0 : -8,
+        transition: {
+          duration: reduced ? 0.12 : 0.22,
+          ease: [0.4, 0, 1, 1],
+        },
+      },
+    }),
+    [reduced],
+  );
+
+  const itemVariants = useMemo<Variants>(
+    () => ({
+      initial: {
+        opacity: 0,
+        y: reduced ? 0 : 16,
+        filter: reduced ? "blur(0px)" : "blur(4px)",
+      },
+      animate: {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: {
+          duration: reduced ? 0.14 : 0.34,
+          ease: [0.22, 1, 0.36, 1],
+        },
+      },
+    }),
+    [reduced],
+  );
 
   const enterStep = () => {
     if (onStepEnterRef.current) {
@@ -58,10 +118,10 @@ export function CStepShell({
 
   useEffect(() => {
     // AnimatePresence mode="wait" mounts the next step after exit;
-    // delay so the new step content exists.
-    const timer = window.setTimeout(enterStep, 300);
+    // delay so the new step content exists and stagger can start.
+    const timer = window.setTimeout(enterStep, reduced ? 180 : 420);
     return () => window.clearTimeout(timer);
-  }, [stepKey]);
+  }, [stepKey, reduced]);
 
   return (
     <main className={classes}>
@@ -97,24 +157,32 @@ export function CStepShell({
           <motion.div
             key={stepKey}
             className="c-step-shell__content"
-            initial={{ opacity: 0, x: 28 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             onAnimationComplete={enterStep}
           >
-            <h1
+            <motion.h1
               ref={titleRef}
               id={titleId}
               className="c-step-shell__title"
               tabIndex={-1}
+              variants={itemVariants}
             >
               {title}
-            </h1>
+            </motion.h1>
             {subtitle ? (
-              <p className="c-step-shell__subtitle">{subtitle}</p>
+              <motion.p
+                className="c-step-shell__subtitle"
+                variants={itemVariants}
+              >
+                {subtitle}
+              </motion.p>
             ) : null}
-            <div className="c-step-shell__main">{children}</div>
+            <motion.div className="c-step-shell__main" variants={itemVariants}>
+              {children}
+            </motion.div>
           </motion.div>
         </AnimatePresence>
       </div>

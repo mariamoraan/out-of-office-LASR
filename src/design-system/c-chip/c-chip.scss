@@ -1,3 +1,8 @@
+.c-chip__motion {
+  display: inline-flex;
+  vertical-align: top;
+}
+
 .c-chip {
   display: inline-flex;
   align-items: center;
@@ -35,6 +40,27 @@
   border-color: var(--color-primary-strong);
   background: rgb(201 97 66 / 30%);
   color: var(--color-text);
+  animation: c-chip-pop 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes c-chip-pop {
+  0% {
+    box-shadow: 0 0 0 0 rgb(201 97 66 / 0%);
+  }
+
+  40% {
+    box-shadow: 0 0 0 5px rgb(201 97 66 / 26%);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(201 97 66 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-chip--selected {
+    animation: none;
+  }
 }
 
 .c-chip__icon {

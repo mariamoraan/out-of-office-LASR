@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
 import {
   useCallback,
@@ -800,20 +801,24 @@ export function SurveyFlow() {
                   }}
                 />
               ))}
-              {hasText(draft.leisureOther) ? (
-                <CChip
-                  key="leisure-other-chip"
-                  label={draft.leisureOther ?? ""}
-                  icon={<Sparkles size={16} strokeWidth={1.75} />}
-                  selected
-                  selection="checkbox"
-                  status={fieldStatus("leisureOther", "selection")}
-                  enterSubmitsFormId={SURVEY_STEP_FORM_ID}
-                  onClick={() => {
-                    void saveImmediate("leisureOther", { leisureOther: null });
-                  }}
-                />
-              ) : null}
+              <AnimatePresence initial={false} mode="popLayout">
+                {hasText(draft.leisureOther) ? (
+                  <CChip
+                    key="leisure-other-chip"
+                    label={draft.leisureOther ?? ""}
+                    icon={<Sparkles size={16} strokeWidth={1.75} />}
+                    selected
+                    selection="checkbox"
+                    status={fieldStatus("leisureOther", "selection")}
+                    enterSubmitsFormId={SURVEY_STEP_FORM_ID}
+                    onClick={() => {
+                      void saveImmediate("leisureOther", {
+                        leisureOther: null,
+                      });
+                    }}
+                  />
+                ) : null}
+              </AnimatePresence>
             </CChoiceGroup>
             <CInput
               id="leisure-other"
