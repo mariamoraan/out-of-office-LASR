@@ -5,8 +5,15 @@ import { appRoutes } from "@/core/routes/app.routes";
 
 import "./landing-page.scss";
 
-export function LandingPage() {
+type LandingPageProps = {
+  hasSubmittedSurvey?: boolean;
+};
+
+export function LandingPage({
+  hasSubmittedSurvey = false,
+}: LandingPageProps) {
   const t = getDictionary("es");
+  const ctaLabel = hasSubmittedSurvey ? t.home.ctaEdit : t.home.cta;
 
   return (
     <main className="f-landing">
@@ -15,7 +22,7 @@ export function LandingPage() {
       <p className="f-landing__subtitle">{t.home.subtitle}</p>
       <p className="f-landing__tagline">{t.home.tagline}</p>
       <Link className="f-landing__cta" href={appRoutes.survey}>
-        {t.home.cta}
+        {ctaLabel}
       </Link>
     </main>
   );
