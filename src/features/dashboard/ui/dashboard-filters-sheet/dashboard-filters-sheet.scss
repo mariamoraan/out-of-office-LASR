@@ -24,6 +24,8 @@
   flex-direction: column;
   width: 100%;
   max-height: min(92dvh, 44rem);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
   background: var(--color-surface);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   border-top: 1px solid var(--color-border);
@@ -83,7 +85,8 @@
 
 .f-dashboard-filters-sheet__footer {
   flex-shrink: 0;
-  padding: var(--space-4) var(--space-5) var(--space-5);
+  padding: var(--space-4) var(--space-5)
+    calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--color-border);
 }
 
