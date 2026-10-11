@@ -191,7 +191,11 @@ export function DashboardResponseDetailPanel({
               />
               <DetailRow
                 label={detail.fields.leisureOther}
-                value={response.leisureOther ?? list.emptyCell}
+                value={
+                  response.leisureOther.length > 0
+                    ? response.leisureOther.join(" · ")
+                    : list.emptyCell
+                }
               />
               <DetailRow
                 label={detail.fields.gender}

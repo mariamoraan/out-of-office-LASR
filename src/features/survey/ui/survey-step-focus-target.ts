@@ -6,7 +6,7 @@ export type SurveyStepFocusDraft = {
   whatsapp: string | null;
   workAreas: string[];
   leisureTags: string[];
-  leisureOther: string | null;
+  leisureOther: string[];
   gender: string | null;
   meetingSlots: string[];
   privacyConsentAcceptedAt: string | null;
@@ -58,7 +58,7 @@ export function getSurveyStepFocusTarget(
       return draft.workAreas.length === 0 ? "workFirst" : null;
 
     case "leisure":
-      if (draft.leisureTags.length === 0 && !hasText(draft.leisureOther)) {
+      if (draft.leisureTags.length === 0 && draft.leisureOther.length === 0) {
         return "leisureFirst";
       }
       return null;

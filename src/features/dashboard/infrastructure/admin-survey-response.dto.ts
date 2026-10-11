@@ -14,7 +14,7 @@ export type AdminSurveyResponseDto = {
   workAreas: SurveyResponse["workAreas"];
   workAreaOther: string | null;
   leisureTags: string[];
-  leisureOther: string | null;
+  leisureOther: string[];
   gender: SurveyResponse["gender"];
   meetingSlots: SurveyResponse["meetingSlots"];
   privacyConsentAcceptedAt: string | null;

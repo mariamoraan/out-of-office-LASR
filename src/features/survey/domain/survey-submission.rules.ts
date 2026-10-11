@@ -60,7 +60,7 @@ export function assertCanSubmit(survey: SurveyResponse): void {
     );
   }
 
-  if (survey.leisureTags.length === 0 && !hasText(survey.leisureOther)) {
+  if (survey.leisureTags.length === 0 && survey.leisureOther.length === 0) {
     throw new SurveyDomainError(
       "SURVEY_LEISURE_REQUIRED",
       "At least one leisure interest is required to submit.",

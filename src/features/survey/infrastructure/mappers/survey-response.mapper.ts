@@ -56,7 +56,7 @@ export function toPrismaDraftPatch(patch: SurveyDraftPatch): {
   workAreas?: PrismaWorkArea[];
   workAreaOther?: string | null;
   leisureTags?: string[];
-  leisureOther?: string | null;
+  leisureOther?: string[];
   gender?: PrismaGender | null;
   meetingSlots?: PrismaMeetingSlot[];
   privacyConsentAcceptedAt?: Date | null;

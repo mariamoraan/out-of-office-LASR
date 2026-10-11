@@ -17,7 +17,7 @@ export type SurveyLocalDraftFields = {
   workAreas: WorkArea[];
   workAreaOther: string | null;
   leisureTags: string[];
-  leisureOther: string | null;
+  leisureOther: string[];
   gender: Gender | null;
   meetingSlots: MeetingSlot[];
   privacyConsentAcceptedAt: string | null;
@@ -62,6 +62,24 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
+/** Accepts string[] (current) or legacy string | null from older local drafts. */
+function parseLeisureOther(value: unknown): string[] | null {
+  if (isStringArray(value)) {
+    return value;
+  }
+
+  if (value === null) {
+    return [];
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length === 0 ? [] : [trimmed];
+  }
+
+  return null;
+}
+
 function parseFields(value: unknown): SurveyLocalDraftFields | null {
   if (!isRecord(value)) {
     return null;
@@ -84,6 +102,8 @@ function parseFields(value: unknown): SurveyLocalDraftFields | null {
     privacyConsentAcceptedAt,
   } = value;
 
+  const parsedLeisureOther = parseLeisureOther(leisureOther);
+
   if (
     !isStringOrNull(fullName) ||
     !isStringOrNull(ageGroup) ||
@@ -95,7 +115,7 @@ function parseFields(value: unknown): SurveyLocalDraftFields | null {
     !isStringArray(workAreas) ||
     !isStringOrNull(workAreaOther) ||
     !isStringArray(leisureTags) ||
-    !isStringOrNull(leisureOther) ||
+    parsedLeisureOther === null ||
     !isStringOrNull(gender) ||
     !isStringArray(meetingSlots)
   ) {
@@ -121,7 +141,7 @@ function parseFields(value: unknown): SurveyLocalDraftFields | null {
     workAreas: workAreas as WorkArea[],
     workAreaOther,
     leisureTags,
-    leisureOther,
+    leisureOther: parsedLeisureOther,
     gender: gender as Gender | null,
     meetingSlots: meetingSlots as MeetingSlot[],
     privacyConsentAcceptedAt: isStringOrNull(privacyConsentAcceptedAt)

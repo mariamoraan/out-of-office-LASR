@@ -109,7 +109,7 @@ function canContinue(step: SurveyStepId, draft: SurveyResponseDto) {
     case "work":
       return draft.workAreas.length > 0;
     case "leisure":
-      return draft.leisureTags.length > 0 || hasText(draft.leisureOther);
+      return draft.leisureTags.length > 0 || draft.leisureOther.length > 0;
     case "gender":
       return Boolean(draft.gender);
     case "meeting":
@@ -802,22 +802,25 @@ export function SurveyFlow() {
                 />
               ))}
               <AnimatePresence initial={false} mode="popLayout">
-                {hasText(draft.leisureOther) ? (
+                {draft.leisureOther.map((item) => (
                   <CChip
-                    key="leisure-other-chip"
-                    label={draft.leisureOther ?? ""}
+                    key={`leisure-other:${item}`}
+                    label={item}
                     icon={<Sparkles size={16} strokeWidth={1.75} />}
                     selected
                     selection="checkbox"
-                    status={fieldStatus("leisureOther", "selection")}
+                    status={fieldStatus(`leisureOther:${item}`, "selection")}
                     enterSubmitsFormId={SURVEY_STEP_FORM_ID}
                     onClick={() => {
-                      void saveImmediate("leisureOther", {
-                        leisureOther: null,
+                      const leisureOther = draft.leisureOther.filter(
+                        (value) => value !== item,
+                      );
+                      void saveImmediate(`leisureOther:${item}`, {
+                        leisureOther,
                       });
                     }}
                   />
-                ) : null}
+                ))}
               </AnimatePresence>
             </CChoiceGroup>
             <CInput
@@ -834,8 +837,17 @@ export function SurveyFlow() {
                   return;
                 }
 
+                const alreadyAdded = draft.leisureOther.some(
+                  (value) => value.toLowerCase() === trimmed.toLowerCase(),
+                );
                 setLeisureOtherDraft("");
-                void saveImmediate("leisureOther", { leisureOther: trimmed });
+                if (alreadyAdded) {
+                  return;
+                }
+
+                void saveImmediate("leisureOther", {
+                  leisureOther: [...draft.leisureOther, trimmed],
+                });
               }}
             />
           </div>

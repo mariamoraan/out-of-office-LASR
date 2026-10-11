@@ -1,8 +1,12 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
+/** Bump when the Prisma schema shape changes so Next.js HMR does not reuse a stale client. */
+const PRISMA_CLIENT_GENERATION = "leisure-other-string-array-v1";
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  prismaClientGeneration: string | undefined;
 };
 
 function createPrismaClient(): PrismaClient {
@@ -23,8 +27,18 @@ function createPrismaClient(): PrismaClient {
   });
 }
 
+if (
+  process.env.NODE_ENV !== "production" &&
+  globalForPrisma.prisma &&
+  globalForPrisma.prismaClientGeneration !== PRISMA_CLIENT_GENERATION
+) {
+  void globalForPrisma.prisma.$disconnect();
+  globalForPrisma.prisma = undefined;
+}
+
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
+  globalForPrisma.prismaClientGeneration = PRISMA_CLIENT_GENERATION;
 }

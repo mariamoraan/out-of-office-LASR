@@ -24,6 +24,28 @@ function normalizeOptionalText(
   return trimmed.length === 0 ? null : trimmed;
 }
 
+function normalizeStringList(values: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const value of values) {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      continue;
+    }
+
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    result.push(trimmed);
+  }
+
+  return result;
+}
+
 export async function updateSurveyDraft(
   sessionToken: string,
   patch: SurveyDraftPatch,
@@ -64,8 +86,7 @@ export async function updateSurveyDraft(
       normalizeOptionalText(patch.workAreaOther) ?? null;
   }
   if (patch.leisureOther !== undefined) {
-    normalizedPatch.leisureOther =
-      normalizeOptionalText(patch.leisureOther) ?? null;
+    normalizedPatch.leisureOther = normalizeStringList(patch.leisureOther);
   }
   if (patch.privacyConsentAcceptedAt !== undefined) {
     // Always stamp acceptance with server time; null clears consent.

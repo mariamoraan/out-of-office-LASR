@@ -60,7 +60,7 @@ model SurveyResponse {
   workAreaOther String?    @map("work_area_other")
 
   leisureTags  String[] @map("leisure_tags")
-  leisureOther String?  @map("leisure_other")
+  leisureOther String[] @default([]) @map("leisure_other")
 
   gender       Gender?
   meetingSlots MeetingSlot[] @map("meeting_slots")

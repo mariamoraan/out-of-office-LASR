@@ -20,7 +20,7 @@ export type SurveyResponse = {
   workAreas: WorkArea[];
   workAreaOther: string | null;
   leisureTags: string[];
-  leisureOther: string | null;
+  leisureOther: string[];
   gender: Gender | null;
   meetingSlots: MeetingSlot[];
   privacyConsentAcceptedAt: Date | null;
@@ -40,7 +40,7 @@ export type SurveyDraftPatch = Partial<{
   workAreas: WorkArea[];
   workAreaOther: string | null;
   leisureTags: string[];
-  leisureOther: string | null;
+  leisureOther: string[];
   gender: Gender | null;
   meetingSlots: MeetingSlot[];
   privacyConsentAcceptedAt: Date | null;
