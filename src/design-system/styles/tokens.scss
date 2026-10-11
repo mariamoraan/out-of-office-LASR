@@ -9,6 +9,13 @@
   --color-primary-text: #fff9f4;
   --color-on-ink: #fff9f4;
   --color-disabled: #d5c6bb;
+  --color-danger: #9b3b2e;
+  --color-danger-strong: #7f2f25;
+  --color-danger-text: #fff8f4;
+
+  --glow-primary: rgb(201 97 66 / 22%);
+  --glow-warm: rgb(255 236 214 / 75%);
+  --color-scrim: rgb(43 33 28 / 40%);
 
   --font-display: "DM Serif Display", "Iowan Old Style", "Palatino Linotype",
     serif;
@@ -30,4 +37,29 @@
   --focus-ring: 0 0 0 3px rgb(201 97 66 / 35%);
 
   --page-max-width: 28rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1410;
+    --color-surface: #2a1f19;
+    --color-text: #f8e9df;
+    --color-text-muted: #c4b0a2;
+    --color-border: #4a3a32;
+    --color-primary: #d97856;
+    --color-primary-strong: #e08a6c;
+    --color-primary-text: #fff9f4;
+    --color-on-ink: #f8e9df;
+    --color-disabled: #3f322b;
+    --color-danger: #e07a6c;
+    --color-danger-strong: #c96142;
+    --color-danger-text: #fff9f4;
+
+    --glow-primary: rgb(201 97 66 / 28%);
+    --glow-warm: rgb(201 97 66 / 10%);
+    --color-scrim: rgb(0 0 0 / 55%);
+
+    --shadow-soft: 0 12px 40px rgb(0 0 0 / 35%);
+    --focus-ring: 0 0 0 3px rgb(217 120 86 / 45%);
+  }
 }

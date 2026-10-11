@@ -31,7 +31,7 @@
   transition: background-color 160ms ease;
 
   &:hover {
-    background: rgb(43 33 28 / 5%);
+    background: color-mix(in srgb, var(--color-text) 6%, transparent);
   }
 
   &:focus {
@@ -72,7 +72,7 @@
 .f-privacy__lead {
   margin-bottom: var(--space-6);
   padding-bottom: var(--space-5);
-  border-bottom: 1px solid rgb(43 33 28 / 10%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
 }
 
 .f-privacy__intro,
@@ -92,8 +92,8 @@
 .f-privacy__disclaimer {
   margin-bottom: 0;
   padding: var(--space-3) var(--space-4);
-  border-left: 3px solid rgb(201 97 66 / 55%);
-  background: rgb(255 249 244 / 55%);
+  border-left: 3px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   color: var(--color-text-muted);
   font-size: 0.95rem;

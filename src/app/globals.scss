@@ -11,7 +11,7 @@ html {
   min-height: 100%;
   min-height: 100dvh;
   background-color: var(--color-bg);
-  color-scheme: light;
+  color-scheme: light dark;
   -webkit-tap-highlight-color: rgb(201 97 66 / 18%);
 }
 
@@ -23,12 +23,12 @@ body {
   background:
     radial-gradient(
       120% 80% at 8% 0%,
-      rgb(201 97 66 / 22%),
+      var(--glow-primary),
       transparent 55%
     ),
     radial-gradient(
       90% 70% at 100% 8%,
-      rgb(255 236 214 / 75%),
+      var(--glow-warm),
       transparent 52%
     ),
     var(--color-bg);

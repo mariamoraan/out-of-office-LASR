@@ -29,7 +29,7 @@
 
   &:focus-within {
     border-color: var(--color-primary-strong);
-    background: #fffdfb;
+    background: color-mix(in srgb, var(--color-surface) 88%, var(--color-bg));
     box-shadow: var(--focus-ring);
   }
 }

@@ -2,7 +2,11 @@ import type { CSSProperties } from "react";
 import type { Metadata, Viewport } from "next";
 import { DM_Serif_Display, Source_Sans_3 } from "next/font/google";
 
-import { APP_NAME, APP_THEME_COLOR } from "@/core/constants/app.constants";
+import {
+  APP_NAME,
+  APP_THEME_COLOR,
+  APP_THEME_COLOR_DARK,
+} from "@/core/constants/app.constants";
 
 import "./globals.scss";
 
@@ -24,8 +28,11 @@ export const viewport: Viewport = {
   // Shrink layout + dvh with the virtual keyboard (Android Chrome/Firefox).
   // iOS still needs the visualViewport sync in CStepShell.
   interactiveWidget: "resizes-content",
-  themeColor: APP_THEME_COLOR,
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: APP_THEME_COLOR },
+    { media: "(prefers-color-scheme: dark)", color: APP_THEME_COLOR_DARK },
+  ],
+  colorScheme: "light dark",
 };
 
 export const metadata: Metadata = {

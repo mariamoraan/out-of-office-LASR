@@ -16,7 +16,7 @@
   &:disabled {
     cursor: not-allowed;
     background: var(--color-disabled);
-    color: rgb(43 33 28 / 45%);
+    color: color-mix(in srgb, var(--color-text) 45%, transparent);
   }
 
   &:focus {

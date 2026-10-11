@@ -7,7 +7,7 @@
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: rgb(255 249 244 / 72%);
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
   transition:
     border-color 160ms ease,
     background-color 160ms ease,
@@ -16,12 +16,12 @@
 
 .f-survey-consent--selected {
   border-color: var(--color-primary-strong);
-  background: rgb(201 97 66 / 14%);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
 }
 
 .f-survey-consent--invalid {
-  border-color: #b42318;
-  box-shadow: 0 0 0 1px rgb(180 35 24 / 18%);
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-danger) 18%, transparent);
 }
 
 .f-survey-consent__box-button {

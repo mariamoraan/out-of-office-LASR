@@ -309,7 +309,7 @@
 
   &:hover,
   &:focus-visible {
-    background: rgb(201 97 66 / 8%);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   }
 
   &:focus {
@@ -322,11 +322,11 @@
 }
 
 .f-dashboard-responses__row--selected {
-  background: rgb(201 97 66 / 12%);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .f-dashboard-responses__row--checked {
-  background: rgb(201 97 66 / 7%);
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent);
 }
 
 .f-dashboard-responses__check-col {
@@ -356,13 +356,13 @@
 
 .f-dashboard-responses__status--draft {
   color: var(--color-text-muted);
-  background: rgb(125 107 95 / 8%);
+  background: color-mix(in srgb, var(--color-text-muted) 8%, transparent);
 }
 
 .f-dashboard-responses__status--submitted {
   color: var(--color-primary-strong);
-  border-color: rgb(201 97 66 / 35%);
-  background: rgb(201 97 66 / 12%);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .f-dashboard-responses__pagination {

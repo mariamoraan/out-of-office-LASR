@@ -14,7 +14,7 @@
   border: none;
   padding: 0;
   margin: 0;
-  background: rgb(43 33 28 / 40%);
+  background: var(--color-scrim);
   cursor: pointer;
 
   &:disabled {
@@ -57,7 +57,7 @@
   font-family: var(--font-body);
   font-size: 0.9rem;
   line-height: 1.4;
-  color: #9b3b2e;
+  color: var(--color-danger);
 }
 
 .f-dashboard-confirm-dialog__actions {
@@ -68,10 +68,10 @@
 }
 
 .f-dashboard-confirm-dialog__confirm:not(:disabled) {
-  background: #9b3b2e;
-  color: #fff8f4;
+  background: var(--color-danger);
+  color: var(--color-danger-text);
 
   &:hover {
-    background: #7f2f25;
+    background: var(--color-danger-strong);
   }
 }

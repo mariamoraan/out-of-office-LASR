@@ -46,7 +46,7 @@
   transition: background-color 160ms ease;
 
   &:hover {
-    background: rgb(43 33 28 / 4%);
+    background: color-mix(in srgb, var(--color-text) 6%, transparent);
   }
 
   &:focus {
@@ -129,7 +129,7 @@
   padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(
     180deg,
-    rgb(248 233 223 / 0%) 0%,
+    transparent 0%,
     var(--color-bg) 28%
   );
 }
