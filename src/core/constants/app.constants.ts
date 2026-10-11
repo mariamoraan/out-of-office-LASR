@@ -1,4 +1,4 @@
-export const APP_NAME = "LA Product";
+export const APP_NAME = "Out Of Office LASR";
 
 export const SURVEY_SESSION_COOKIE = "survey_session_id";
 

@@ -18,9 +18,9 @@ export const es = {
       `Paso ${current} de ${total}`,
   },
   home: {
-    title: "Únete al grupo",
+    title: "Sal del modo oficina",
     subtitle:
-      "Teletrabajadores de producto digital en Los Angeles de San Rafael.",
+      "Grupo de teletrabajadores de producto digital en Los Angeles de San Rafael.",
     cta: "Empezar",
   },
   survey: {

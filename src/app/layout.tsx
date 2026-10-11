@@ -1,12 +1,13 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { DM_Serif_Display, Source_Sans_3 } from "next/font/google";
 
 import { APP_NAME } from "@/core/constants/app.constants";
 
 import "./globals.scss";
 
-const fraunces = Fraunces({
+const dmSerifDisplay = DM_Serif_Display({
+  weight: "400",
   variable: "--font-display-family",
   subsets: ["latin"],
 });
@@ -19,7 +20,7 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   title: APP_NAME,
   description:
-    "Grupo de teletrabajadores en producto digital — Los Angeles de San Rafael.",
+    "Out Of Office LASR — teletrabajadores de producto digital en Los Angeles de San Rafael.",
 };
 
 const bodyFontVars = {
@@ -29,7 +30,10 @@ const bodyFontVars = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${fraunces.variable} ${sourceSans.variable}`}>
+    <html
+      lang="es"
+      className={`${dmSerifDisplay.variable} ${sourceSans.variable}`}
+    >
       <body style={bodyFontVars}>{children}</body>
     </html>
   );
