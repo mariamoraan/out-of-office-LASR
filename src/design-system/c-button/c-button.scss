@@ -9,13 +9,14 @@
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
   transition: background-color 160ms ease, color 160ms ease;
 
   &:disabled {
     cursor: not-allowed;
     background: var(--color-disabled);
-    color: rgb(26 31 44 / 45%);
+    color: rgb(43 33 28 / 45%);
   }
 
   &:focus {

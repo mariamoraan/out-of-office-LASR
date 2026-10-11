@@ -1,0 +1,53 @@
+.f-dashboard-login {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-5);
+}
+
+.f-dashboard-login__panel {
+  width: 100%;
+  max-width: var(--page-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.f-dashboard-login__brand {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 500;
+}
+
+.f-dashboard-login__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.f-dashboard-login__subtitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.f-dashboard-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.f-dashboard-login__error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-primary-strong);
+}

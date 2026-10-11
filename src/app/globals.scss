@@ -14,8 +14,16 @@ body {
 
 body {
   background:
-    radial-gradient(120% 80% at 10% 0%, rgb(142 184 229 / 28%), transparent 55%),
-    radial-gradient(90% 70% at 100% 10%, rgb(255 255 255 / 80%), transparent 50%),
+    radial-gradient(
+      120% 80% at 8% 0%,
+      rgb(201 97 66 / 22%),
+      transparent 55%
+    ),
+    radial-gradient(
+      90% 70% at 100% 8%,
+      rgb(255 236 214 / 75%),
+      transparent 52%
+    ),
     var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);

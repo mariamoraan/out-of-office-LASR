@@ -13,12 +13,15 @@ export {
   Heart,
   LineChart,
   Link2,
+  ListFilter,
   LoaderCircle,
+  LogOut,
   Mars,
   MessageCircle,
   Mountain,
   Paintbrush,
   Palette,
+  RefreshCw,
   Rocket,
   Scissors,
   Server,
@@ -33,6 +36,7 @@ export {
   Dumbbell,
   TreePine,
   Footprints,
+  X,
 } from "lucide-react";
 
 export type { LucideIcon, LucideProps } from "lucide-react";

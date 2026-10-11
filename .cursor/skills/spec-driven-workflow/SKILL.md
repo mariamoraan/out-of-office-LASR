@@ -1,7 +1,7 @@
 ---
 name: spec-driven-workflow
 description: >-
-  Spec-driven development workflow for LA Product: clarify with 0–5 sequential
+  Spec-driven development workflow for Out Of Office LASR: clarify with 0–5 sequential
   questions, propose a Markdown solution, then after agree create a plan with
   summary, Definition of Done, and short tasks executed one at a time after
   human approval. Use when the user asks to implement a feature, change product

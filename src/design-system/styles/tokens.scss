@@ -1,13 +1,14 @@
 :root {
-  --color-bg: #f7f9fc;
-  --color-surface: #ffffff;
-  --color-text: #1a1f2c;
-  --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-primary: #8eb8e5;
-  --color-primary-strong: #6ea0d8;
-  --color-primary-text: #14324f;
-  --color-disabled: #d1d5db;
+  --color-bg: #f8e9df;
+  --color-surface: #fff9f4;
+  --color-text: #2b211c;
+  --color-text-muted: #7d6b5f;
+  --color-border: #e6d2c4;
+  --color-primary: #c96142;
+  --color-primary-strong: #a8482e;
+  --color-primary-text: #fff9f4;
+  --color-on-ink: #fff9f4;
+  --color-disabled: #d5c6bb;
 
   --font-display: "DM Serif Display", "Iowan Old Style", "Palatino Linotype",
     serif;
@@ -25,8 +26,8 @@
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
 
-  --shadow-soft: 0 12px 40px rgb(26 31 44 / 6%);
-  --focus-ring: 0 0 0 3px rgb(142 184 229 / 28%);
+  --shadow-soft: 0 12px 40px rgb(43 33 28 / 7%);
+  --focus-ring: 0 0 0 3px rgb(201 97 66 / 35%);
 
   --page-max-width: 28rem;
 }

@@ -33,8 +33,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="es"
       className={`${dmSerifDisplay.variable} ${sourceSans.variable}`}
+      suppressHydrationWarning
     >
-      <body style={bodyFontVars}>{children}</body>
+      <body style={bodyFontVars} suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

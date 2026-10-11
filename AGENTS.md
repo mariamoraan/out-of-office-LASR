@@ -8,9 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# LA Product — Agent Guide
+# Out Of Office LASR — Agent Guide
 
-App to collect applications from people in Los Angeles de San Rafael who want to join a digital-product remote-workers group. Includes a public multi-step survey and a private admin dashboard.
+App to collect applications from people in Los Angeles de San Rafael who want to join a digital-product remote-workers group (**Out Of Office LASR**). Includes a public multi-step survey and a private admin dashboard.
 
 ## Stack
 
