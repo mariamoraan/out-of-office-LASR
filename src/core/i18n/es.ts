@@ -19,8 +19,9 @@ export const es = {
   },
   home: {
     title: "Sal del modo oficina",
+    tagline: "Cerramos el portátil. Nos vemos fuera.",
     subtitle:
-      "Grupo de teletrabajadores de producto digital en Los Angeles de San Rafael.",
+      "Una comunidad de personas que trabajamos en producto digital y tecnología desde Los Ángeles de San Rafael y alrededores.",
     cta: "Empezar",
   },
   survey: {
@@ -45,7 +46,7 @@ export const es = {
         consentBeforeLink: "He leído la ",
         consentLink: "política de privacidad",
         consentAfterLink:
-          " y acepto que Out Of Office LASR me contacte por email o WhatsApp para organizar el grupo.",
+          " y acepto que Out Of Office · LASR me contacte por email o WhatsApp para organizar el grupo.",
         consentError:
           "Debes aceptar la política de privacidad y el contacto para continuar.",
       },
@@ -224,21 +225,21 @@ export const es = {
     updatedAt: "11 de octubre de 2026",
     backHome: "Volver al inicio",
     intro:
-      "Esta política explica cómo Out Of Office LASR trata los datos personales que nos facilitas a través de este sitio web, en particular al completar el formulario de interés para unirte al grupo de teletrabajadores de producto digital en Los Angeles de San Rafael (España).",
+      "Esta política explica cómo Out Of Office · LASR trata los datos personales que nos facilitas a través de este sitio web, en particular al completar el formulario de interés para unirte al grupo de teletrabajadores de producto digital en Los Angeles de San Rafael (España).",
     disclaimer:
       "Este documento tiene carácter informativo y está redactado para una iniciativa comunitaria informal. No constituye asesoramiento jurídico. Si necesitas una valoración legal específica, consulta a un profesional.",
     sections: [
       {
         title: "1. Responsable del tratamiento",
         paragraphs: [
-          "El responsable del tratamiento es la iniciativa comunitaria Out Of Office LASR (en adelante, «nosotros»), sin personalidad jurídica propia en el momento de publicar esta política.",
+          "El responsable del tratamiento es la iniciativa comunitaria Out Of Office · LASR (en adelante, «nosotros»), sin personalidad jurídica propia en el momento de publicar esta política.",
           "Hasta que se publique un canal de contacto dedicado, puedes ejercer tus derechos respondiendo al mismo medio (email o WhatsApp) por el que te contactemos en relación con tu solicitud, o a través de cualquier canal oficial que indiquemos en esta página cuando esté disponible.",
         ],
       },
       {
         title: "2. Ámbito de aplicación",
         paragraphs: [
-          "Esta política se aplica a los datos personales recogidos a través del formulario de solicitud / encuesta de Out Of Office LASR y a la gestión administrativa asociada (incluido el panel privado de administración).",
+          "Esta política se aplica a los datos personales recogidos a través del formulario de solicitud / encuesta de Out Of Office · LASR y a la gestión administrativa asociada (incluido el panel privado de administración).",
           "No se aplica a sitios web, redes sociales o servicios de terceros a los que puedas acceder mediante enlaces externos.",
         ],
       },
@@ -262,7 +263,7 @@ export const es = {
           "Tratamos tus datos para:",
         ],
         bullets: [
-          "Gestionar tu solicitud de interés en el grupo Out Of Office LASR.",
+          "Gestionar tu solicitud de interés en el grupo Out Of Office · LASR.",
           "Contactarte por email o WhatsApp en relación con la organización del grupo y las quedadas.",
           "Entender de forma agregada el perfil del grupo (edad, género, áreas, ocio y disponibilidad) para organizar actividades.",
           "Mantener el borrador de tu formulario hasta que lo envíes o lo abandones.",
@@ -280,11 +281,11 @@ export const es = {
       {
         title: "6. Destinatarios y encargados del tratamiento",
         paragraphs: [
-          "Tus datos no se venden ni se ceden a terceros para fines comerciales ajenos a Out Of Office LASR.",
+          "Tus datos no se venden ni se ceden a terceros para fines comerciales ajenos a Out Of Office · LASR.",
           "Pueden acceder a ellos:",
         ],
         bullets: [
-          "Las personas organizadoras de Out Of Office LASR, exclusivamente para las finalidades indicadas.",
+          "Las personas organizadoras de Out Of Office · LASR, exclusivamente para las finalidades indicadas.",
           "Proveedores tecnológicos que actúan como encargados del tratamiento (por ejemplo, alojamiento de la aplicación y base de datos en la nube), sujetos a obligaciones de confidencialidad y seguridad.",
         ],
         closing:

@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: APP_NAME,
   description:
-    "Out Of Office LASR — teletrabajadores de producto digital en Los Angeles de San Rafael.",
+    "Out Of Office · LASR — teletrabajadores de producto digital en Los Angeles de San Rafael.",
   appleWebApp: {
     capable: true,
     title: APP_NAME,

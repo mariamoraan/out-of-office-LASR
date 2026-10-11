@@ -1,4 +1,4 @@
-export const APP_NAME = "Out Of Office LASR";
+export const APP_NAME = "Out Of Office · LASR";
 
 /** Matches `--color-bg` — used for mobile browser chrome / theme-color. */
 export const APP_THEME_COLOR = "#f8e9df";
