@@ -47,13 +47,6 @@ export class PrismaSurveyResponseRepository
       );
     }
 
-    if (existing.status === "submitted") {
-      throw new SurveyDomainError(
-        "SURVEY_ALREADY_SUBMITTED",
-        "Submitted surveys cannot be updated.",
-      );
-    }
-
     const row = await prisma.surveyResponse.update({
       where: { sessionToken },
       data: toPrismaDraftPatch(patch),

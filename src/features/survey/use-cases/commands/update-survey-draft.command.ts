@@ -39,13 +39,6 @@ export async function updateSurveyDraft(
     );
   }
 
-  if (existing.status === "submitted") {
-    throw new SurveyDomainError(
-      "SURVEY_ALREADY_SUBMITTED",
-      "Submitted surveys cannot be updated.",
-    );
-  }
-
   const normalizedPatch: SurveyDraftPatch = { ...patch };
 
   if (patch.fullName !== undefined) {
