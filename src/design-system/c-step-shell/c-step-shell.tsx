@@ -19,6 +19,8 @@ type CStepShellProps = {
   progressLabel?: string;
   backLabel?: string;
   onBack?: () => void;
+  /** Called after the step content is ready; defaults to focusing the title. */
+  onStepEnter?: () => void;
   footer?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -35,21 +37,29 @@ export function CStepShell({
   progressLabel,
   backLabel = "Volver",
   onBack,
+  onStepEnter,
   footer,
   children,
   className,
 }: CStepShellProps) {
   const classes = ["c-step-shell", className ?? ""].filter(Boolean).join(" ");
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const onStepEnterRef = useRef(onStepEnter);
+  onStepEnterRef.current = onStepEnter;
 
-  const focusTitle = () => {
+  const enterStep = () => {
+    if (onStepEnterRef.current) {
+      onStepEnterRef.current();
+      return;
+    }
+
     titleRef.current?.focus({ preventScroll: true });
   };
 
   useEffect(() => {
     // AnimatePresence mode="wait" mounts the next step after exit;
-    // delay so the new title node exists.
-    const timer = window.setTimeout(focusTitle, 300);
+    // delay so the new step content exists.
+    const timer = window.setTimeout(enterStep, 300);
     return () => window.clearTimeout(timer);
   }, [stepKey]);
 
@@ -91,7 +101,7 @@ export function CStepShell({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            onAnimationComplete={focusTitle}
+            onAnimationComplete={enterStep}
           >
             <h1
               ref={titleRef}

@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type Ref,
 } from "react";
 
 import { TEXT_INPUT_DEBOUNCE_MS } from "@/core/constants/app.constants";
@@ -60,6 +61,10 @@ import {
   toSurveyLocalDraftFields,
   writeSurveyLocalDraft,
 } from "@/features/survey/ui/survey-local-draft";
+import {
+  getSurveyStepFocusTarget,
+  type SurveyStepFocusTarget,
+} from "@/features/survey/ui/survey-step-focus-target";
 
 import "./survey-flow.scss";
 
@@ -128,9 +133,39 @@ export function SurveyFlow() {
   const textSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const draftRef = useRef<SurveyResponseDto | null>(null);
+  const stepFocusRef = useRef<HTMLInputElement | HTMLButtonElement | null>(
+    null,
+  );
 
   const stepId = SURVEY_STEPS[stepIndex];
   const stepCopy = t.survey.steps[stepId];
+  const focusTarget =
+    draft != null ? getSurveyStepFocusTarget(stepId, draft) : null;
+
+  draftRef.current = draft;
+
+  const focusRefFor = <T extends HTMLInputElement | HTMLButtonElement>(
+    target: SurveyStepFocusTarget,
+  ): Ref<T> | undefined =>
+    focusTarget === target ? (stepFocusRef as Ref<T>) : undefined;
+
+  const handleStepEnter = useCallback(() => {
+    const currentDraft = draftRef.current;
+    if (!currentDraft) {
+      return;
+    }
+
+    const target = getSurveyStepFocusTarget(stepId, currentDraft);
+    if (target) {
+      stepFocusRef.current?.focus();
+      return;
+    }
+
+    document
+      .getElementById(SURVEY_STEP_TITLE_ID)
+      ?.focus({ preventScroll: true });
+  }, [stepId]);
 
   useEffect(() => {
     return () => {
@@ -403,6 +438,7 @@ export function SurveyFlow() {
       progressLabel={t.a11y.progress(stepIndex + 1, SURVEY_STEP_COUNT)}
       backLabel={t.common.back}
       onBack={handleBack}
+      onStepEnter={handleStepEnter}
       footer={
         <div className="f-survey-flow__footer">
           {error ? (
@@ -427,6 +463,7 @@ export function SurveyFlow() {
       <form id={SURVEY_STEP_FORM_ID} onSubmit={handleStepSubmit} noValidate>
         {stepId === "fullName" ? (
           <CInput
+            ref={focusRefFor("fullName")}
             id="full-name"
             value={draft.fullName ?? ""}
             placeholder={t.survey.steps.fullName.placeholder}
@@ -444,6 +481,7 @@ export function SurveyFlow() {
             {AGE_GROUPS.map((ageGroup, index) => (
               <COptionRow
                 key={ageGroup}
+                ref={index === 0 ? focusRefFor("ageGroupFirst") : undefined}
                 label={t.survey.labels.ageGroups[ageGroup]}
                 selected={draft.ageGroup === ageGroup}
                 selection="radio"
@@ -467,6 +505,7 @@ export function SurveyFlow() {
         {stepId === "contact" ? (
           <div className="f-survey-flow__stack">
             <CInput
+              ref={focusRefFor("email")}
               id="email"
               label={t.survey.steps.contact.emailLabel}
               value={draft.email ?? ""}
@@ -484,6 +523,7 @@ export function SurveyFlow() {
               }}
             />
             <CInput
+              ref={focusRefFor("whatsapp")}
               id="whatsapp"
               label={t.survey.steps.contact.whatsappLabel}
               value={draft.whatsapp ?? ""}
@@ -515,6 +555,7 @@ export function SurveyFlow() {
         {stepId === "social" ? (
           <div className="f-survey-flow__stack">
             <CInput
+              ref={focusRefFor("linkedin")}
               id="linkedin"
               label={t.survey.steps.social.linkedin}
               value={draft.linkedin ?? ""}
@@ -526,6 +567,7 @@ export function SurveyFlow() {
               }}
             />
             <CInput
+              ref={focusRefFor("instagram")}
               id="instagram"
               label={t.survey.steps.social.instagram}
               value={draft.instagram ?? ""}
@@ -537,6 +579,7 @@ export function SurveyFlow() {
               }}
             />
             <CInput
+              ref={focusRefFor("xHandle")}
               id="x-handle"
               label={t.survey.steps.social.x}
               value={draft.xHandle ?? ""}
@@ -553,9 +596,10 @@ export function SurveyFlow() {
         {stepId === "work" ? (
           <div className="f-survey-flow__stack">
             <CChoiceGroup mode="multi" labelledBy={SURVEY_STEP_TITLE_ID}>
-              {WORK_AREAS.map((workArea) => (
+              {WORK_AREAS.map((workArea, index) => (
                 <COptionRow
                   key={workArea}
+                  ref={index === 0 ? focusRefFor("workFirst") : undefined}
                   label={t.survey.labels.workAreas[workArea]}
                   icon={workAreaIcons[workArea]}
                   selected={draft.workAreas.includes(workArea)}
@@ -574,6 +618,7 @@ export function SurveyFlow() {
             </CChoiceGroup>
             {draft.workAreas.includes("other_tech") ? (
               <CInput
+                ref={focusRefFor("workAreaOther")}
                 id="work-other"
                 label={t.common.other}
                 value={draft.workAreaOther ?? ""}
@@ -594,9 +639,10 @@ export function SurveyFlow() {
               labelledBy={SURVEY_STEP_TITLE_ID}
               className="c-choice-group--chips"
             >
-              {LEISURE_TAGS.map((tag) => (
+              {LEISURE_TAGS.map((tag, index) => (
                 <CChip
                   key={tag}
+                  ref={index === 0 ? focusRefFor("leisureFirst") : undefined}
                   label={t.survey.labels.leisure[tag]}
                   icon={leisureIcons[tag as LeisureTag]}
                   selected={draft.leisureTags.includes(tag)}
@@ -628,6 +674,7 @@ export function SurveyFlow() {
             {GENDERS.map((gender, index) => (
               <COptionRow
                 key={gender}
+                ref={index === 0 ? focusRefFor("genderFirst") : undefined}
                 label={t.survey.labels.genders[gender]}
                 icon={genderIcons[gender]}
                 selected={draft.gender === gender}
@@ -651,9 +698,10 @@ export function SurveyFlow() {
 
         {stepId === "meeting" ? (
           <CChoiceGroup mode="multi" labelledBy={SURVEY_STEP_TITLE_ID}>
-            {MEETING_SLOTS.map((slot) => (
+            {MEETING_SLOTS.map((slot, index) => (
               <COptionRow
                 key={slot}
+                ref={index === 0 ? focusRefFor("meetingFirst") : undefined}
                 label={t.survey.labels.meetingSlots[slot]}
                 icon={<Calendar size={18} strokeWidth={1.75} />}
                 selected={draft.meetingSlots.includes(slot)}
