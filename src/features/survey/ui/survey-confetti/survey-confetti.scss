@@ -10,11 +10,12 @@
   position: absolute;
   top: -0.5rem;
   border-radius: 1px;
+  opacity: 0.92;
   will-change: transform, opacity;
 }
 
 .f-survey-confetti__piece--square {
-  border-radius: 2px;
+  border-radius: 1.5px;
 }
 
 .f-survey-confetti__piece--rect {

@@ -48,6 +48,7 @@ export function CStepShell({
   className,
 }: CStepShellProps) {
   const classes = ["c-step-shell", className ?? ""].filter(Boolean).join(" ");
+  const shellRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const onStepEnterRef = useRef(onStepEnter);
   const reduced = useReducedMotion() ?? false;
@@ -55,6 +56,65 @@ export function CStepShell({
   useEffect(() => {
     onStepEnterRef.current = onStepEnter;
   }, [onStepEnter]);
+
+  // Keep the shell sized to the visual viewport so the virtual keyboard does not
+  // leave a dead gap (Android overlays by default; iOS never resizes layout).
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const syncViewport = () => {
+      const vv = window.visualViewport;
+      if (!vv) {
+        shell.style.height = "";
+        shell.style.maxHeight = "";
+        shell.style.transform = "";
+        return;
+      }
+
+      shell.style.height = `${vv.height}px`;
+      shell.style.maxHeight = `${vv.height}px`;
+      // Counter iOS visual-viewport pan so the shell stays in the visible frame.
+      shell.style.transform = vv.offsetTop
+        ? `translateY(${vv.offsetTop}px)`
+        : "";
+    };
+
+    syncViewport();
+
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", syncViewport);
+    vv?.addEventListener("scroll", syncViewport);
+    window.addEventListener("resize", syncViewport);
+
+    return () => {
+      vv?.removeEventListener("resize", syncViewport);
+      vv?.removeEventListener("scroll", syncViewport);
+      window.removeEventListener("resize", syncViewport);
+      shell.style.height = "";
+      shell.style.maxHeight = "";
+      shell.style.transform = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const onFocusIn = (event: FocusEvent) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") return;
+
+      // Wait for the keyboard / visualViewport resize before scrolling.
+      window.setTimeout(() => {
+        target.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }, 120);
+    };
+
+    shell.addEventListener("focusin", onFocusIn);
+    return () => shell.removeEventListener("focusin", onFocusIn);
+  }, []);
 
   const contentVariants = useMemo<Variants>(
     () => ({
@@ -124,7 +184,7 @@ export function CStepShell({
   }, [stepKey, reduced]);
 
   return (
-    <main className={classes}>
+    <main ref={shellRef} className={classes}>
       <div className="c-step-shell__progress">
         <CProgress
           current={currentStep}

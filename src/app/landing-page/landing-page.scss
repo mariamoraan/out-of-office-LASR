@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   max-width: var(--page-max-width);
   margin: 0 auto;
   padding-top: calc(var(--space-6) + env(safe-area-inset-top, 0px));
@@ -15,43 +15,46 @@
 .f-landing__brand {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: clamp(1.85rem, 5vw, 2.15rem);
   font-weight: 500;
+  line-height: 1.15;
   color: var(--color-text);
 }
 
 .f-landing__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 6vw, 2.75rem);
+  font-size: clamp(1.85rem, 5.2vw, 2.35rem);
   font-weight: 500;
-  line-height: 1.15;
-  color: var(--color-text);
-}
-
-.f-landing__tagline {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.2;
   color: var(--color-text);
 }
 
 .f-landing__subtitle {
   margin: 0;
+  max-width: 360px;
   font-family: var(--font-body);
   font-size: 1.05rem;
   line-height: 1.5;
   color: var(--color-text-muted);
 }
 
+.f-landing__tagline {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
 
 .f-landing__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: var(--space-2);
+  align-self: flex-start;
+  margin-top: var(--space-3);
   min-height: 3.25rem;
   padding: 0 var(--space-5);
   border: none;

@@ -8,10 +8,9 @@ import "./survey-confetti.scss";
 const BRAND_COLORS = [
   "#c96142",
   "#a8482e",
-  "#2b211c",
-  "#fff9f4",
   "#e6d2c4",
-  "#f0a070",
+  "#fff9f4",
+  "#d4845c",
 ] as const;
 
 type Particle = {
@@ -67,7 +66,7 @@ export function SurveyConfetti({ className }: SurveyConfettiProps) {
       return [] as Particle[];
     }
 
-    return [...createParticles(42, true), ...createParticles(28, false)];
+    return [...createParticles(28, true), ...createParticles(18, false)];
   }, [hasMounted, reduced]);
 
   useEffect(() => {
@@ -75,7 +74,7 @@ export function SurveyConfetti({ className }: SurveyConfettiProps) {
       return;
     }
 
-    const timer = window.setTimeout(() => setEnded(true), 5200);
+    const timer = window.setTimeout(() => setEnded(true), 4600);
     return () => window.clearTimeout(timer);
   }, [hasMounted, reduced]);
 

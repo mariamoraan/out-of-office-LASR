@@ -8,7 +8,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { useEffect, useId, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   COMMUNITY_PORTRAITS,
@@ -25,7 +25,6 @@ const ARC_DURATION_S = 40;
 const VIEW_W = 360;
 const VIEW_H = 128;
 const AVATAR_RADIUS = 172;
-const CAPTION_RADIUS = 116;
 /** Visible arc half-span from the crown (65° → ~130° total, under a semicircle). */
 const VISIBLE_HALF_SPAN = (65 * Math.PI) / 180;
 const CX = VIEW_W / 2;
@@ -34,7 +33,6 @@ const CY = VIEW_H + Math.sin(Math.PI / 2 - VISIBLE_HALF_SPAN) * AVATAR_RADIUS;
 const ORBIT_LOOPS = 2;
 
 type CommunityArcProps = {
-  caption: string;
   className?: string;
 };
 
@@ -81,12 +79,12 @@ function ArcAvatar({
   });
   const zIndex = useTransform(angle, (a) => Math.round(Math.sin(a) * 24));
   const opacity = useTransform(angle, (a) => {
-    // Fade near the clip edge of the short visible crown.
+    // Soft dissolve near the visible crown edge (pairs with stage mask).
     const edge = Math.sin(a) - Math.sin(Math.PI / 2 - VISIBLE_HALF_SPAN);
-    if (edge < 0.08) {
-      return Math.max(0, edge / 0.08) * 0.4;
+    if (edge < 0.12) {
+      return Math.max(0, edge / 0.12) * 0.55;
     }
-    return 0.62 + Math.sin(a) * 0.38;
+    return 0.72 + Math.sin(a) * 0.28;
   });
 
   if (reduced) {
@@ -138,10 +136,9 @@ function ArcAvatar({
   );
 }
 
-export function CommunityArc({ caption, className }: CommunityArcProps) {
+export function CommunityArc({ className }: CommunityArcProps) {
   const reduced = useReducedMotion() ?? false;
   const progress = useMotionValue(0);
-  const pathId = useId().replace(/:/g, "");
   const classes = ["f-community-arc", className ?? ""].filter(Boolean).join(" ");
 
   const portraits = useMemo(
@@ -165,23 +162,9 @@ export function CommunityArc({ caption, className }: CommunityArcProps) {
     return () => controls.stop();
   }, [progress, reduced]);
 
-  // Upper crown path (west→east via north). Clockwise from west = upper arc.
-  const captionStart = positionFromAngle(
-    Math.PI / 2 + VISIBLE_HALF_SPAN * 0.92,
-    CAPTION_RADIUS,
-  );
-  const captionEnd = positionFromAngle(
-    Math.PI / 2 - VISIBLE_HALF_SPAN * 0.92,
-    CAPTION_RADIUS,
-  );
-  const captionPath = [
-    `M ${captionStart.x} ${captionStart.y}`,
-    `A ${CAPTION_RADIUS} ${CAPTION_RADIUS} 0 0 1 ${captionEnd.x} ${captionEnd.y}`,
-  ].join(" ");
-
   return (
-    <figure className={classes} aria-label={caption}>
-      <div className="f-community-arc__stage" aria-hidden>
+    <div className={classes} aria-hidden>
+      <div className="f-community-arc__stage">
         {portraits.map((portrait, index) => (
           <ArcAvatar
             key={`${portrait.src}-${index}`}
@@ -192,27 +175,7 @@ export function CommunityArc({ caption, className }: CommunityArcProps) {
             reduced={reduced}
           />
         ))}
-        <svg
-          className="f-community-arc__caption-svg"
-          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-          role="presentation"
-        >
-          <defs>
-            <path id={pathId} d={captionPath} fill="none" />
-          </defs>
-          <text className="f-community-arc__caption-text" fill="currentColor">
-            <textPath
-              href={`#${pathId}`}
-              xlinkHref={`#${pathId}`}
-              startOffset="50%"
-              textAnchor="middle"
-            >
-              {caption}
-            </textPath>
-          </text>
-        </svg>
       </div>
-      <figcaption className="f-community-arc__caption-sr">{caption}</figcaption>
-    </figure>
+    </div>
   );
 }

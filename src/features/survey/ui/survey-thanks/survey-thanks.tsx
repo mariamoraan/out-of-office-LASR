@@ -13,10 +13,7 @@ export function SurveyThanks() {
   return (
     <main className="f-survey-thanks">
       <SurveyConfetti />
-      <CommunityArc
-        className="f-survey-thanks__community"
-        caption={t.survey.thanks.communityCaption}
-      />
+      <CommunityArc className="f-survey-thanks__community" />
       <p className="f-survey-thanks__brand">{t.appName}</p>
       <h1 className="f-survey-thanks__title">{t.survey.thanks.title}</h1>
       <p className="f-survey-thanks__subtitle">{t.survey.thanks.subtitle}</p>

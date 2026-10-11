@@ -21,6 +21,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Shrink layout + dvh with the virtual keyboard (Android Chrome/Firefox).
+  // iOS still needs the visualViewport sync in CStepShell.
+  interactiveWidget: "resizes-content",
   themeColor: APP_THEME_COLOR,
   colorScheme: "light",
 };

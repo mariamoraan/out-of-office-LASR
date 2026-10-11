@@ -2,9 +2,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  // Fallback before JS sync; inline style from visualViewport overrides on client.
   height: 100dvh;
   max-height: 100dvh;
-  overflow: hidden;
+  overflow: clip;
   max-width: var(--page-max-width);
   margin: 0 auto;
   padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0px));

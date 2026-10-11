@@ -18,10 +18,7 @@ export function LandingPage({
 
   return (
     <main className="f-landing">
-      <CommunityArc
-        className="f-landing__community"
-        caption={t.home.communityCaption}
-      />
+      <CommunityArc className="f-landing__community" />
       <p className="f-landing__brand">{t.appName}</p>
       <h1 className="f-landing__title">{t.home.title}</h1>
       <p className="f-landing__subtitle">{t.home.subtitle}</p>

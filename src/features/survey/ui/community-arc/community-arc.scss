@@ -2,7 +2,19 @@
   display: block;
   width: 100%;
   margin: 0 0 var(--space-5);
-  color: var(--color-text-muted);
+  animation: f-community-arc-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes f-community-arc-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .f-community-arc__stage {
@@ -11,6 +23,21 @@
   aspect-ratio: 360 / 128;
   margin-inline: auto;
   overflow: hidden;
+  // Soft horizon so the full-circle orbit dissolves instead of hard-clipping.
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 58%,
+    rgb(0 0 0 / 55%) 78%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 58%,
+    rgb(0 0 0 / 55%) 78%,
+    transparent 100%
+  );
 }
 
 .f-community-arc__avatar {
@@ -20,61 +47,34 @@
   height: 2.85rem;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid var(--color-surface);
-  box-shadow: var(--shadow-soft);
+  border: 1.5px solid rgb(255 249 244 / 92%);
+  box-shadow:
+    0 1px 0 rgb(255 249 244 / 70%),
+    0 10px 22px rgb(43 33 28 / 14%);
   will-change: transform, left, top, opacity;
+  background: var(--color-surface);
 
   img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 20%;
+    object-position: center 18%;
   }
-}
-
-.f-community-arc__caption-svg {
-  position: absolute;
-  inset: 0;
-  z-index: 8;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.f-community-arc__caption-text {
-  fill: currentColor;
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
-.f-community-arc__caption-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 @media (min-width: 480px) {
   .f-community-arc__avatar {
-    width: 3.1rem;
-    height: 3.1rem;
-  }
-
-  .f-community-arc__caption-text {
-    font-size: 15px;
+    width: 3.15rem;
+    height: 3.15rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .f-community-arc {
+    animation: none;
+  }
+
   .f-community-arc__avatar {
     will-change: auto;
   }

@@ -22,7 +22,6 @@ export const es = {
     tagline: "Cerramos el portátil. Nos vemos fuera.",
     subtitle:
       "Una comunidad de personas que trabajamos en producto digital y tecnología desde Los Ángeles de San Rafael y alrededores.",
-    communityCaption: "Únete al resto de personas",
     cta: "Empezar",
     ctaEdit: "Editar mis respuestas",
   },
@@ -84,7 +83,6 @@ export const es = {
       title: "¡Gracias!",
       subtitle:
         "Hemos recibido tu información. Te escribiremos cuando organicemos la quedada.",
-      communityCaption: "Ya formas parte",
       cta: "Volver al inicio",
     },
     labels: {
