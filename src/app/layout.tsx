@@ -1,8 +1,8 @@
 import type { CSSProperties } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Serif_Display, Source_Sans_3 } from "next/font/google";
 
-import { APP_NAME } from "@/core/constants/app.constants";
+import { APP_NAME, APP_THEME_COLOR } from "@/core/constants/app.constants";
 
 import "./globals.scss";
 
@@ -17,10 +17,23 @@ const sourceSans = Source_Sans_3({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: APP_THEME_COLOR,
+  colorScheme: "light",
+};
+
 export const metadata: Metadata = {
   title: APP_NAME,
   description:
     "Out Of Office LASR — teletrabajadores de producto digital en Los Angeles de San Rafael.",
+  appleWebApp: {
+    capable: true,
+    title: APP_NAME,
+    statusBarStyle: "black-translucent",
+  },
 };
 
 const bodyFontVars = {

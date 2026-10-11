@@ -1,5 +1,8 @@
 export const APP_NAME = "Out Of Office LASR";
 
+/** Matches `--color-bg` — used for mobile browser chrome / theme-color. */
+export const APP_THEME_COLOR = "#f8e9df";
+
 export const SURVEY_SESSION_COOKIE = "survey_session_id";
 
 /** Browser cache for in-progress survey fields + step (cleared on submit). */
