@@ -206,14 +206,17 @@ export function SurveyFlow() {
           return;
         }
 
-        if (survey.status === "submitted") {
+        const fields = toSurveyLocalDraftFields(survey);
+        const isSubmitted = survey.status === "submitted";
+
+        if (isSubmitted) {
           clearSurveyLocalDraft();
-          router.replace(appRoutes.surveyThanks);
+          setDraft(survey);
+          setStepIndex(0);
           return;
         }
 
         const local = readSurveyLocalDraft();
-        const fields = toSurveyLocalDraftFields(survey);
         const matchedLocal =
           local && local.id === survey.id ? local : null;
         const nextStepIndex = matchedLocal
@@ -248,7 +251,7 @@ export function SurveyFlow() {
     return () => {
       active = false;
     };
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (!draft || draft.status === "submitted") {
@@ -470,6 +473,13 @@ export function SurveyFlow() {
             ? new Date(draft.privacyConsentAcceptedAt)
             : null,
         });
+
+        if (draft.status === "submitted") {
+          clearSurveyLocalDraft();
+          router.push(appRoutes.home);
+          return;
+        }
+
         await submitSurveyDraft();
         clearSurveyLocalDraft();
         router.push(appRoutes.surveyThanks);
@@ -559,7 +569,11 @@ export function SurveyFlow() {
             form={SURVEY_STEP_FORM_ID}
             disabled={!continueEnabled}
           >
-            {stepId === "meeting" ? t.common.submit : t.common.continue}
+            {stepId === "meeting"
+              ? draft.status === "submitted"
+                ? t.survey.edit.doneCta
+                : t.common.submit
+              : t.common.continue}
           </CButton>
         </div>
       }
