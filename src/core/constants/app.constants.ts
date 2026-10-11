@@ -2,6 +2,9 @@ export const APP_NAME = "Out Of Office LASR";
 
 export const SURVEY_SESSION_COOKIE = "survey_session_id";
 
+/** Browser cache for in-progress survey fields + step (cleared on submit). */
+export const SURVEY_LOCAL_DRAFT_KEY = "ooo-lasr.survey-draft";
+
 export const ADMIN_SESSION_COOKIE = "admin_session";
 
 /** Signed admin session lifetime (7 days). */

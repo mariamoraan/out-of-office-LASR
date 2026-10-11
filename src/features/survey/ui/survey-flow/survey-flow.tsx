@@ -54,6 +54,12 @@ import {
   patchSurveyDraft,
   submitSurveyDraft,
 } from "@/features/survey/ui/survey-api-client";
+import {
+  clearSurveyLocalDraft,
+  readSurveyLocalDraft,
+  toSurveyLocalDraftFields,
+  writeSurveyLocalDraft,
+} from "@/features/survey/ui/survey-local-draft";
 
 import "./survey-flow.scss";
 
@@ -145,11 +151,27 @@ export function SurveyFlow() {
         }
 
         if (survey.status === "submitted") {
+          clearSurveyLocalDraft();
           router.replace(appRoutes.surveyThanks);
           return;
         }
 
+        const local = readSurveyLocalDraft();
+        const fields = toSurveyLocalDraftFields(survey);
+        const matchedLocal =
+          local && local.id === survey.id ? local : null;
+        const nextStepIndex = matchedLocal
+          ? Math.min(matchedLocal.stepIndex, SURVEY_STEP_COUNT - 1)
+          : 0;
+
+        writeSurveyLocalDraft({
+          id: survey.id,
+          stepIndex: nextStepIndex,
+          fields,
+        });
+
         setDraft(survey);
+        setStepIndex(nextStepIndex);
       } catch (loadError) {
         if (active) {
           setError(
@@ -171,6 +193,18 @@ export function SurveyFlow() {
       active = false;
     };
   }, [router]);
+
+  useEffect(() => {
+    if (!draft || draft.status === "submitted") {
+      return;
+    }
+
+    writeSurveyLocalDraft({
+      id: draft.id,
+      stepIndex,
+      fields: toSurveyLocalDraftFields(draft),
+    });
+  }, [draft, stepIndex]);
 
   const markTextSaved = useCallback((key: string) => {
     setTextSavedKey(key);
@@ -300,6 +334,7 @@ export function SurveyFlow() {
           meetingSlots: draft.meetingSlots,
         });
         await submitSurveyDraft();
+        clearSurveyLocalDraft();
         router.push(appRoutes.surveyThanks);
       } catch (submitError) {
         setError(
