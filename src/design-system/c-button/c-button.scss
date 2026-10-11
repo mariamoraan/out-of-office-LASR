@@ -1,0 +1,42 @@
+.c-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0 var(--space-5);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    background: var(--color-disabled);
+    color: rgb(26 31 44 / 45%);
+  }
+}
+
+.c-button--full {
+  width: 100%;
+}
+
+.c-button--primary:not(:disabled) {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+
+  &:hover {
+    background: var(--color-primary-strong);
+  }
+}
+
+.c-button--ghost:not(:disabled) {
+  background: transparent;
+  color: var(--color-text-muted);
+
+  &:hover {
+    color: var(--color-text);
+  }
+}

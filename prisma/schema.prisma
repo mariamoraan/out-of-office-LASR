@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SurveyStatus {
+  draft
+  submitted
+}
+
+enum AgeGroup {
+  AGE_18_25
+  AGE_26_39
+  AGE_40_54
+  AGE_55_PLUS
+}
+
+enum Gender {
+  mujer
+  hombre
+  no_binario
+  prefiero_no_decirlo
+}
+
+enum WorkArea {
+  engineering_development
+  product_management
+  ux_ui_design
+  data_ai
+  marketing_growth
+  entrepreneurship_founders
+  qa_devops_systems
+  other_tech
+}
+
+enum MeetingSlot {
+  wed_14_19_00
+  mon_19_19_00
+  wed_21_19_00
+}
+
+model SurveyResponse {
+  id           String       @id @default(cuid())
+  sessionToken String       @unique @map("session_token")
+  status       SurveyStatus @default(draft)
+
+  fullName String?   @map("full_name")
+  ageGroup AgeGroup? @map("age_group")
+  email    String?
+  whatsapp String?
+
+  linkedin  String?
+  instagram String?
+  xHandle   String? @map("x_handle")
+
+  workAreas     WorkArea[] @map("work_areas")
+  workAreaOther String?    @map("work_area_other")
+
+  leisureTags  String[] @map("leisure_tags")
+  leisureOther String?  @map("leisure_other")
+
+  gender       Gender?
+  meetingSlots MeetingSlot[] @map("meeting_slots")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  submittedAt DateTime? @map("submitted_at")
+
+  @@map("survey_responses")
+}

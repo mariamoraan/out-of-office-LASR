@@ -1,0 +1,102 @@
+.c-step-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+.c-step-shell__progress {
+  margin-bottom: var(--space-4);
+}
+
+.c-step-shell__header {
+  margin-bottom: var(--space-5);
+}
+
+.c-step-shell__top {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 2.5rem;
+  align-items: center;
+  min-height: 2.5rem;
+}
+
+.c-step-shell__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: -0.4rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+
+  &:hover {
+    background: rgb(26 31 44 / 4%);
+  }
+}
+
+.c-step-shell__back-spacer {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.c-step-shell__brand {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.c-step-shell__body {
+  flex: 1;
+  min-height: 0;
+}
+
+.c-step-shell__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.c-step-shell__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 5.5vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.c-step-shell__subtitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.c-step-shell__main {
+  margin-top: var(--space-5);
+}
+
+.c-step-shell__footer {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  padding-top: var(--space-5);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: linear-gradient(
+    180deg,
+    rgb(247 249 252 / 0%) 0%,
+    var(--color-bg) 28%
+  );
+}

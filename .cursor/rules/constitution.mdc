@@ -1,0 +1,37 @@
+---
+description: LA Product constitution — hard rules for architecture and workflow
+alwaysApply: true
+---
+
+# Constitution — LA Product
+
+## Workflow
+
+- Before implementing a feature: questions (0–5, one at a time) → MD spec → agree → plan (summary + DoD + tasks).
+- Execute **one plan task** per turn, unless the human explicitly approves a larger block (e.g. "phase 0").
+- Do not invent scope outside the agreed plan/spec.
+
+## Architecture
+
+- Domain and use-case code only under `src/features/<feature>/{domain,use-cases,infrastructure,ui}`.
+- Commands = writes; queries = reads. Do not mix both in the same use-case.
+- `src/app` stays thin: routing, composition, and HTTP adapters that delegate to use-cases.
+- Reusable UI in `src/design-system`. Cross-cutting utilities in `src/core`.
+
+## Style and naming
+
+- kebab-case for files and folders.
+- One `.tsx` per folder with colocated `.scss`; BEM is required.
+- Icons: import only from `@/core/icons` (or the barrel alias). Never from `lucide-react` in features/UI.
+
+## Data and security
+
+- Persistence only via Prisma in `infrastructure`; UI never talks to the DB.
+- `/dashboard` is private; credentials only via env; never expose response listings on public routes.
+
+## Quality
+
+- Keep diffs minimal and focused on the approved task.
+- Do not add unrequested docs/markdown except AGENTS, rules, skills, or workflow specs.
+- Project Markdown (AGENTS, rules, skills, specs, plans) must be written in **English**. UI copy stays Spanish via i18n.
+- Prefer Motion for flow transitions over ad-hoc CSS animation.

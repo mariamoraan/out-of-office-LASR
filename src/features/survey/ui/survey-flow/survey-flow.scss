@@ -1,0 +1,33 @@
+.f-survey-flow--loading {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+
+.f-survey-flow__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.f-survey-flow__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.f-survey-flow__error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: #b42318;
+}
+
+.f-survey-flow__status {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}

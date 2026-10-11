@@ -1,0 +1,23 @@
+.c-progress {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.c-progress__segment {
+  position: relative;
+  height: 0.2rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+
+.c-progress__fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  background: var(--color-primary-strong);
+  border-radius: inherit;
+}
