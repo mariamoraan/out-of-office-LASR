@@ -1,6 +1,5 @@
 .c-option-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
   gap: var(--space-3);
   width: 100%;
@@ -49,6 +48,18 @@
 }
 
 .c-option-row__label {
+  flex: 1;
+  min-width: 0;
   font-family: var(--font-body);
   font-size: 1rem;
+}
+
+.c-option-row__status.c-field-status {
+  margin-left: auto;
+  color: var(--color-primary-strong);
+
+  .c-field-status__spinner,
+  .c-field-status__check {
+    color: inherit;
+  }
 }

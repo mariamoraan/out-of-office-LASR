@@ -80,7 +80,10 @@ export function COptionRow({
         </span>
       ) : null}
       <span className="c-option-row__label">{label}</span>
-      <CFieldStatus status={trailingStatus} />
+      <CFieldStatus
+        className="c-option-row__status"
+        status={trailingStatus}
+      />
     </motion.button>
   );
 }
