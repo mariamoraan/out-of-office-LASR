@@ -14,6 +14,8 @@ import {
 } from "@/features/dashboard/ui/dashboard-responses/dashboard-filter-state";
 import { CButton, CChip, CChipGroup, CInput } from "@/design-system";
 
+import "./dashboard-responses.scss";
+
 type DashboardFiltersFormProps = {
   filters: FilterState;
   idPrefix: string;

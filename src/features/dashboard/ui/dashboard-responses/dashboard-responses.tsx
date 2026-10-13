@@ -25,6 +25,7 @@ import {
 } from "@/features/dashboard/ui/dashboard-api-client";
 import { DashboardConfirmDialog } from "@/features/dashboard/ui/dashboard-confirm-dialog/dashboard-confirm-dialog";
 import { DashboardFiltersSheet } from "@/features/dashboard/ui/dashboard-filters-sheet/dashboard-filters-sheet";
+import { DashboardNav } from "@/features/dashboard/ui/dashboard-nav/dashboard-nav";
 import { DashboardResponseDetailPanel } from "@/features/dashboard/ui/dashboard-response-detail-panel/dashboard-response-detail-panel";
 import {
   countActiveFilters,
@@ -322,6 +323,7 @@ export function DashboardResponses() {
             </span>
           </CButton>
         </div>
+        <DashboardNav active="responses" />
         <div className="f-dashboard-responses__heading">
           <h1 className="f-dashboard-responses__title">{list.title}</h1>
           <p className="f-dashboard-responses__subtitle">{list.subtitle}</p>

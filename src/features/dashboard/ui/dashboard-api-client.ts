@@ -1,5 +1,9 @@
-import type { AdminSurveyResponseDto } from "@/features/dashboard/infrastructure/admin-survey-response.dto";
 import type { AgeGroup, Gender, MeetingSlot, WorkArea } from "@/core/constants/survey.constants";
+import type {
+  AdminSurveyStatsDimension,
+  AdminSurveyStatsResult,
+} from "@/features/dashboard/domain/admin-survey-stats";
+import type { AdminSurveyResponseDto } from "@/features/dashboard/infrastructure/admin-survey-response.dto";
 import type { SurveyStatus } from "@/features/survey/domain/survey-status";
 
 type AdminApiError = {
@@ -160,4 +164,73 @@ export async function deleteAdminSurveyResponsesRequest(
   }
 
   return payload as AdminSurveyDeleteResponse;
+}
+
+export type AdminSurveyStatsQuery = {
+  dimension: AdminSurveyStatsDimension;
+  status?: SurveyStatus;
+  ageGroups: AgeGroup[];
+  workAreas: WorkArea[];
+  meetingSlots: MeetingSlot[];
+  genders: Gender[];
+  search: string;
+};
+
+function buildStatsSearchParams(query: AdminSurveyStatsQuery): URLSearchParams {
+  const params = new URLSearchParams();
+
+  params.set("dimension", query.dimension);
+
+  if (query.status) {
+    params.set("status", query.status);
+  }
+
+  for (const ageGroup of query.ageGroups) {
+    params.append("ageGroup", ageGroup);
+  }
+
+  for (const workArea of query.workAreas) {
+    params.append("workArea", workArea);
+  }
+
+  for (const meetingSlot of query.meetingSlots) {
+    params.append("meetingSlot", meetingSlot);
+  }
+
+  for (const gender of query.genders) {
+    params.append("gender", gender);
+  }
+
+  const search = query.search.trim();
+  if (search) {
+    params.set("search", search);
+  }
+
+  return params;
+}
+
+export async function fetchAdminSurveyStats(
+  query: AdminSurveyStatsQuery,
+  signal?: AbortSignal,
+): Promise<AdminSurveyStatsResult> {
+  const params = buildStatsSearchParams(query);
+  const response = await fetch(`/api/dashboard/stats?${params}`, {
+    method: "GET",
+    cache: "no-store",
+    signal,
+  });
+
+  const payload = (await response.json()) as
+    | AdminSurveyStatsResult
+    | AdminApiError;
+
+  if (!response.ok) {
+    if ("error" in payload) {
+      throw new DashboardApiError(payload.error.code, payload.error.message);
+    }
+
+    throw new DashboardApiError("INTERNAL_ERROR", "Request failed");
+  }
+
+  return payload as AdminSurveyStatsResult;
 }

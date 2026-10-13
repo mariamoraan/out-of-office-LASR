@@ -4,6 +4,7 @@ export const appRoutes = {
   surveyThanks: "/survey/thanks",
   privacy: "/privacidad",
   dashboard: "/dashboard",
+  dashboardStats: "/dashboard/stats",
   dashboardLogin: "/dashboard/login",
 } as const;
 
