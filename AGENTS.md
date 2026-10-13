@@ -59,13 +59,13 @@ Agreed fields:
 | Field | Notes |
 | --- | --- |
 | Full name | Required |
-| Age group | `18-25` / `26-39` / `40-54` / `55+` |
-| Contact | Email **or** WhatsApp; at least one required |
+| Age group | Optional; `18-25` / `26-39` / `40-54` / `55+` |
+| Contact | Optional; email and/or WhatsApp. Privacy consent required only if a contact method is provided |
 | Social profiles | Optional (LinkedIn, Instagram, X) |
-| Work area | Multi-select + Other (text) |
-| Leisure | Multi-select chips + Other (text) |
-| Gender | `mujer` / `hombre` / `no_binario` / `prefiero_no_decirlo` |
-| Meetup dates | Multi-select: Wed 14 19:00, Mon 19 19:00, Wed 21 19:00 |
+| Work area | Optional; multi-select + Other (text) |
+| Leisure | Optional; multi-select chips + Other (text) |
+| Gender | Optional; `mujer` / `hombre` / `no_binario` / `prefiero_no_decirlo` |
+| Meetup dates | Required; multi-select: Wed 14 19:00, Mon 19 19:00, Wed 21 19:00 |
 
 Autosave: anonymous session cookie; persist on option select; text fields debounced (~400ms).
 

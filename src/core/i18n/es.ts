@@ -36,23 +36,23 @@ export const es = {
         placeholder: "Nombre y apellidos",
       },
       ageGroup: {
-        title: "¿Cuál es tu grupo de edad?",
-        subtitle: "Así vemos la mezcla del grupo.",
+        title: "¿Cuál es tu grupo de edad? (opcional)",
+        subtitle: "Así vemos la mezcla del grupo. Puedes continuar sin responder.",
       },
       contact: {
-        title: "¿Cómo te contactamos?",
-        subtitle: "Email o WhatsApp — al menos uno es obligatorio.",
+        title: "¿Cómo te contactamos? (opcional)",
+        subtitle:
+          "Email o WhatsApp, si quieres. Si dejas datos de contacto, acepta la privacidad.",
         emailLabel: "Email",
         emailPlaceholder: "tu@email.com",
         whatsappLabel: "WhatsApp",
         whatsappPlaceholder: "+34 600 000 000",
-        error: "Indica al menos un email o un WhatsApp.",
         consentBeforeLink: "He leído la ",
         consentLink: "política de privacidad",
         consentAfterLink:
           " y acepto que Out Of Office · LASR me contacte por email o WhatsApp para organizar el grupo.",
         consentError:
-          "Debes aceptar la política de privacidad y el contacto para continuar.",
+          "Si dejas un contacto, debes aceptar la política de privacidad para continuar.",
       },
       social: {
         title: "Añade tus redes (opcional)",
@@ -63,16 +63,18 @@ export const es = {
         placeholder: "@usuario",
       },
       work: {
-        title: "¿En qué trabajas?",
-        subtitle: "Puedes elegir varias opciones.",
+        title: "¿En qué trabajas? (opcional)",
+        subtitle: "Puedes elegir varias opciones o continuar sin responder.",
       },
       leisure: {
-        title: "¿Qué ocio te gusta?",
-        subtitle: "Elige lo que te encaje. Puedes añadir algo propio.",
+        title: "¿Qué ocio te gusta? (opcional)",
+        subtitle:
+          "Elige lo que te encaje o continúa sin responder. Puedes añadir algo propio.",
       },
       gender: {
-        title: "¿Cuál es tu género?",
-        subtitle: "Nos ayuda a conocer mejor la composición del grupo.",
+        title: "¿Cuál es tu género? (opcional)",
+        subtitle:
+          "Nos ayuda a conocer mejor la composición del grupo. Puedes continuar sin responder.",
       },
       meeting: {
         title: "¿Cuándo te viene bien quedar?",

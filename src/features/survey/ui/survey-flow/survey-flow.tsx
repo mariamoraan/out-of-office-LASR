@@ -80,7 +80,6 @@ import "./survey-flow.scss";
 const TEXT_SAVED_VISIBLE_MS = 3000;
 const SURVEY_STEP_FORM_ID = "survey-step-form";
 const SURVEY_STEP_TITLE_ID = "survey-step-title";
-const CONTACT_ERROR_ID = "survey-contact-error";
 const CONSENT_ERROR_ID = "survey-consent-error";
 const FORM_ERROR_ID = "survey-form-error";
 
@@ -101,17 +100,14 @@ function canContinue(step: SurveyStepId, draft: SurveyResponseDto) {
     case "fullName":
       return hasText(draft.fullName);
     case "ageGroup":
-      return Boolean(draft.ageGroup);
-    case "contact":
-      return hasContactMethod(draft) && hasPrivacyConsent(draft);
     case "social":
-      return true;
     case "work":
-      return draft.workAreas.length > 0;
     case "leisure":
-      return draft.leisureTags.length > 0 || draft.leisureOther.length > 0;
     case "gender":
-      return Boolean(draft.gender);
+      return true;
+    case "contact":
+      // Empty contact is optional; if any method is filled, consent is required.
+      return !hasContactMethod(draft) || hasPrivacyConsent(draft);
     case "meeting":
       return draft.meetingSlots.length > 0;
     default:
@@ -145,7 +141,6 @@ export function SurveyFlow() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [contactError, setContactError] = useState<string | null>(null);
   const [consentError, setConsentError] = useState<string | null>(null);
   const [leisureOtherDraft, setLeisureOtherDraft] = useState("");
   const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -434,7 +429,6 @@ export function SurveyFlow() {
       return;
     }
 
-    setContactError(null);
     setConsentError(null);
     setStepIndex((index) => index - 1);
   };
@@ -447,15 +441,14 @@ export function SurveyFlow() {
     if (stepId === "contact") {
       const contactOk = hasContactMethod(draft);
       const consentOk = hasPrivacyConsent(draft);
-      setContactError(contactOk ? null : t.survey.steps.contact.error);
-      setConsentError(consentOk ? null : t.survey.steps.contact.consentError);
-      if (!contactOk || !consentOk) {
+      if (contactOk && !consentOk) {
+        setConsentError(t.survey.steps.contact.consentError);
         return;
       }
+      setConsentError(null);
+    } else {
+      setConsentError(null);
     }
-
-    setContactError(null);
-    setConsentError(null);
 
     if (stepId === "meeting") {
       setIsSubmitting(true);
@@ -511,7 +504,8 @@ export function SurveyFlow() {
       return false;
     }
 
-    // Contact: keep enabled so Enter/click can surface the validation error.
+    // Contact: keep enabled so Enter/click can surface the consent error
+    // when a contact method is filled without accepting privacy terms.
     if (stepId === "contact") {
       return true;
     }
@@ -542,7 +536,6 @@ export function SurveyFlow() {
     );
   }
 
-  const contactInvalid = Boolean(contactError);
   const consentInvalid = Boolean(consentError);
   const consentSelected = hasPrivacyConsent(draft);
 
@@ -638,10 +631,7 @@ export function SurveyFlow() {
               autoComplete="email"
               leading={<AtSign size={18} strokeWidth={1.75} />}
               status={fieldStatus("email", "text")}
-              ariaInvalid={contactInvalid}
-              ariaDescribedBy={contactInvalid ? CONTACT_ERROR_ID : undefined}
               onChange={(value) => {
-                setContactError(null);
                 saveDebounced("email", { email: value });
               }}
             />
@@ -655,22 +645,10 @@ export function SurveyFlow() {
               autoComplete="tel"
               leading={<MessageCircle size={18} strokeWidth={1.75} />}
               status={fieldStatus("whatsapp", "text")}
-              ariaInvalid={contactInvalid}
-              ariaDescribedBy={contactInvalid ? CONTACT_ERROR_ID : undefined}
               onChange={(value) => {
-                setContactError(null);
                 saveDebounced("whatsapp", { whatsapp: value });
               }}
             />
-            {contactError ? (
-              <p
-                id={CONTACT_ERROR_ID}
-                className="f-survey-flow__error"
-                role="alert"
-              >
-                {contactError}
-              </p>
-            ) : null}
             <SurveyPrivacyConsent
               ref={focusRefFor("privacyConsent")}
               selected={consentSelected}

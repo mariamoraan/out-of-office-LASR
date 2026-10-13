@@ -5,16 +5,11 @@ function hasText(value: string | null | undefined): boolean {
   return Boolean(value?.trim());
 }
 
-export function assertHasContact(
+function hasContactMethod(
   email: string | null | undefined,
   whatsapp: string | null | undefined,
-): void {
-  if (!hasText(email) && !hasText(whatsapp)) {
-    throw new SurveyDomainError(
-      "SURVEY_CONTACT_REQUIRED",
-      "At least one contact method (email or WhatsApp) is required.",
-    );
-  }
+): boolean {
+  return hasText(email) || hasText(whatsapp);
 }
 
 export function assertPrivacyConsentAccepted(
@@ -43,35 +38,8 @@ export function assertCanSubmit(survey: SurveyResponse): void {
     );
   }
 
-  if (!survey.ageGroup) {
-    throw new SurveyDomainError(
-      "SURVEY_AGE_GROUP_REQUIRED",
-      "Age group is required to submit.",
-    );
-  }
-
-  assertHasContact(survey.email, survey.whatsapp);
-  assertPrivacyConsentAccepted(survey.privacyConsentAcceptedAt);
-
-  if (survey.workAreas.length === 0) {
-    throw new SurveyDomainError(
-      "SURVEY_WORK_AREA_REQUIRED",
-      "At least one work area is required to submit.",
-    );
-  }
-
-  if (survey.leisureTags.length === 0 && survey.leisureOther.length === 0) {
-    throw new SurveyDomainError(
-      "SURVEY_LEISURE_REQUIRED",
-      "At least one leisure interest is required to submit.",
-    );
-  }
-
-  if (!survey.gender) {
-    throw new SurveyDomainError(
-      "SURVEY_GENDER_REQUIRED",
-      "Gender is required to submit.",
-    );
+  if (hasContactMethod(survey.email, survey.whatsapp)) {
+    assertPrivacyConsentAccepted(survey.privacyConsentAcceptedAt);
   }
 
   if (survey.meetingSlots.length === 0) {
